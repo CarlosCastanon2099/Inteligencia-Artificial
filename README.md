@@ -26,7 +26,7 @@ Cecilia Reyes Peña
 
 ### Ayudantes
 
-Todavia no ~ hay ayudantes XD
+Karem Ramos Calpulalpan ~ Tania Michelle Rubí Rojas 
   
 </div>  
 
