@@ -3,6 +3,7 @@ from chatterbot.trainers import ListTrainer
 from chatterbot.comparisons import LevenshteinDistance
 from chatterbot.conversation import Statement
 
+# Creamos un nuevo ChatBot
 chat = ChatBot('Recomendabot',
                 storage_adapter='chatterbot.storage.SQLStorageAdapter',
                 
@@ -14,6 +15,11 @@ chat = ChatBot('Recomendabot',
                     }
                 ],
                 )
+
+# En los siguientes arreglos se encuentran las respuestas que el chatbot puede dar:
+# Estas estan enfocadas a saludar, despedirse, dar recomendaciones de musica y peliculas, contar chistes y dar datos curiosos
+
+# Arreglo que contiene las respuestas a los posibles saludos del usuario
 saludos = [
     ['Hola', 'Hola'],
     ['Buenos dias', 'Buen dia'],
@@ -45,6 +51,7 @@ saludos = [
     ['Que mensaje le darias al mundo', "Que seamos mas amables y compasivos con los demas"],
 ]
 
+# Arreglo que contiene las respuestas a los posibles solicitudes de recomendaciones de musica del usuario
 recomendar_musica = [
 		# ['Me puedes recomendar musica', 'Te recomiendo el album Barrio Estacion de Los Bunkers'],
 	    # ['Me puedes recomendar musica', 'Te recomiendo la cancion Death of a Bachelor de Panic at the Disco'],
@@ -119,6 +126,7 @@ recomendar_musica = [
 
 ]
 
+# Arreglo que contiene las respuestas a los posibles solicitudes de recomendaciones de peliculas del usuario
 recomendar_pelicula =[
     # ["Me puedes recomendar una pelicula", "Te recomiendo la pelicula Gladiator (2000)"],
     # ["Me puedes recomendar una pelicula", "Te recomiendo la pelicula Una mente maravillosa (2001)"],
@@ -181,6 +189,7 @@ recomendar_pelicula =[
     ["Quiero ver una pelicula,  que me sugieres", 'Te recomiendo la pelicula Cold Mountain dirigida por Anthony Minghella'],
 ]
 
+# Arreglo que contiene las respuestas a los posibles solicitudes de chistes del usuario
 chistes = [
     # ['Me puedes contar un chiste', ' Que le dice un jaguar a otro jaguar "Jaguar you"'],
     # ['Me puedes contar un chiste', ' Que hace una abeja en el gimnasio Zum-ba'],
@@ -257,6 +266,7 @@ chistes = [
     ['Necesito un chiste para animarme,  puedes ayudarme', ' Que le dice un jardinero a otro jardinero Eres un rastrero'],
 ]
 
+# Arreglo que contiene las respuestas a los posibles solicitudes de datos curiosos del usuario
 datos_curiosos = [
     # ['Me puedes contar un dato curioso', 'Rusia es mas grande que Pluton'],
     # ['Me puedes contar un dato curioso', 'Minecraft ya es el videojuego mas vendido en el mundo'],
@@ -313,6 +323,7 @@ datos_curiosos = [
     ['Puedes decirme algo que me sorprenda', 'Los delfines tienen nombres propios para comunicarse'],
 ]
 
+# Arreglo que contiene las respuestas a los posibles solicitudes de recomendaciones de videojuegos del usuario
 videojuegos =[
     ['Me puedes recomendar un videojuego', 'Te recomiendo el videojuego de Halo'],
     ['Me puedes recomendar un juego', 'Te recomiendo el videojuego de Minecraft'],
@@ -384,6 +395,7 @@ videojuegos =[
     ["Tienes algun juego para compartir", 'Te recomiendo el videojuego Outer Wilds'],
 ]
 
+# Arreglo que contiene las respuestas de agradecimiento para el usuario de parte del bot
 agradecimientos = [
     ['Gracias', 'De nada'],
     ['Muchas gracias', 'Un placer ayudarte'],
@@ -396,8 +408,10 @@ agradecimientos = [
     ['Gracias', 'De nada, fue todo un placer'],
 ]
 
+# Le decimos al chatbot que idioma debe usar (español)
 levenshtein_distance = LevenshteinDistance('spanish')
 
+# Entrenamos al chatbot con las respuestas a las posibles solicitudes del usuario
 trainer = ListTrainer(chat)
 for i in range(1):
     for saludo in saludos: trainer.train(saludo)
@@ -412,6 +426,7 @@ print('\n\n\n')
 print('Este es el Recomendabot\nTe puedo recomendar musica, Peliculas, Videojuegos, contarte un chiste, o darte un dato curioso')
 print('Si quisiera terminar la interaccion, proceda a despedirse :D')
 
+# Iniciamos la interaccion con el usuario y el chatbot
 while levenshtein_distance.compare(Statement(peticion) , Statement('Adios') ) < 0.50:
     peticion = input('User: ' )
     respuesta = chat.get_response(peticion)
