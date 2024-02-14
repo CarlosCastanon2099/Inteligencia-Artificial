@@ -327,7 +327,7 @@ datos_curiosos = [
 videojuegos =[
     ['Me puedes recomendar un videojuego', 'Te recomiendo el videojuego de Halo'],
     ['Me puedes recomendar un juego', 'Te recomiendo el videojuego de Minecraft'],
-    ['Me puedes recomendar un videojuego', 'Te recomiendo el videojuego de Club Penguin'],
+    ['Recomiendame un videojuego', 'Te recomiendo el videojuego de Club Penguin'],
     ["Me puedes recomendar un videojuego", 'Te recomiendo el videojuego The Witcher 3: Wild Hunt'], ##############
     ["Me recomiendas algun videojuego", 'Te recomiendo el videojuego Red Dead Redemption 2'],
     ["Podrias sugerirme un videojuego", 'Te recomiendo el videojuego The Legend of Zelda: Breath of the Wild'],
