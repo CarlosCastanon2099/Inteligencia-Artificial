@@ -7,6 +7,7 @@
 ###  <em> Tareas realizadas durante el curso: </em>
 </div>
 
+> -  Tarea 00: <em> Evaluación de agentes </em>
 > -  Tarea 01: <em> This :> Tarea 01. </em>
 > -  Tarea 02: <em> This :> Tarea 02. </em>
 > -  Tarea 03: <em> This :> Tarea 03. </em>
