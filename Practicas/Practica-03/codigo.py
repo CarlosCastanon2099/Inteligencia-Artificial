@@ -132,8 +132,7 @@ def matrixToGraph(laberinto):
 
     # Dibujar el grafo
     pos = {(fila, columna): (columna, -fila) for fila in range(filas) for columna in range(columnas)}
-    #nx.draw(G, pos, with_labels=True, node_size=700, node_color='cyan', font_size=8, font_weight='bold')
-    #plt.show()
+
 
 def dibujar_grafo_laberinto(laberinto):
     G = nx.Graph()
@@ -164,6 +163,7 @@ def dibujar_grafo_laberinto(laberinto):
 
     # Dibujar el grafo
     pos = {(fila, columna): (columna, -fila) for fila in range(filas) for columna in range(columnas)}
+    #print(pos)
     nx.draw(G, pos, with_labels=True, node_size=700, node_color='cyan', font_size=8, font_weight='bold')
     plt.show()
 
@@ -191,7 +191,9 @@ def doxeaLaS(laberinto):
                 return (i,j)
 
 
-# dibujar_grafo_laberinto(laberinto)
+############################################
+dibujar_grafo_laberinto(laberinto)
+############################################
 
 '''
 Implementacion de BFS
@@ -199,48 +201,94 @@ Implementacion de BFS
 Usando matrixToGraph tomaremos el laberinto y lo convertiremos en una grafica
 a la cual le aplicaremos el algoritmo de BFS para encontrar la salida "S" desde un vertice
 inicial "E" (o donde inicie el agente)
+
 '''
 
 
+    
 def BFS(Laberinto):
     G = nx.Graph()
-    matrixToGraph(Laberinto)
 
     # Vertice Inicial (E)
-    inicio = (xAGENTE,yAGENTE)
+    inicio = (xAGENTE, yAGENTE)
 
     # Vertice Final (S)
     fin = doxeaLaS(Laberinto)
-    
+
+    filas = len(laberinto)
+    columnas = len(laberinto[0])
+
+    # Crear nodos
+    for fila in range(filas):
+        for columna in range(columnas):
+            # Agregar nodo con su posición como atributo
+            G.add_node((fila, columna))
+
+    # Crear aristas
+    for fila in range(filas):
+        for columna in range(columnas):
+            # Verificar si la celda actual es un pasillo (0 o "E" o "S")
+            if laberinto[fila][columna] == 0 or laberinto[fila][columna] == "E" or laberinto[fila][columna] == "S":
+                # Agregar aristas a las celdas vecinas que también son pasillos
+                if fila > 0 and laberinto[fila - 1][columna] == 0:
+                    G.add_edge((fila, columna), (fila - 1, columna))
+                if fila < filas - 1 and laberinto[fila + 1][columna] == 0:
+                    G.add_edge((fila, columna), (fila + 1, columna))
+                if columna > 0 and laberinto[fila][columna - 1] == 0:
+                    G.add_edge((fila, columna), (fila, columna - 1))
+                if columna < columnas - 1 and laberinto[fila][columna + 1] == 0:
+                    G.add_edge((fila, columna), (fila, columna + 1))
+
     # Algoritmo BFS
+    inicioVertice = inicio
+    finVertice = fin
+    
+    # Cola para almacenar los nodos que se van a visitar
+    cola = [inicioVertice]
+    # Conjunto para almacenar los nodos que ya se visitaron
     visitados = set()
-    cola = [inicio]
-    visitados.add(inicio)
-    while len(cola) > 0:
+    # Diccionario para almacenar el camino que se ha seguido para llegar a cada nodo
+    camino = {inicioVertice: None}
+
+    # Mientras la cola no está vacía
+    while cola:
+        # Sacar el primer nodo de la cola
         actual = cola.pop(0)
-        if actual == fin:
-            return True
-        for vecino in G.neighbors(actual):
-            if vecino not in visitados:
-                visitados.add(vecino)
-                cola.append(vecino)
-    return False
+        # Si el nodo actual es el nodo final, terminar
+        if actual == finVertice:
+            break
+        # Si el nodo actual no ha sido visitado
+        if actual not in visitados:
+            # Marcar el nodo actual como visitado
+            visitados.add(actual)
+            # Agregar los vecinos del nodo actual a la cola
+            for vecino in G.neighbors(actual):
+                if vecino not in visitados:
+                    cola.append(vecino)
+                    # Almacenar el camino que se ha seguido para llegar al vecino
+                    camino[vecino] = actual
 
+    # Construir la nueva gráfica con los nodos y aristas alcanzables por BFS
+    G_bfs = nx.Graph()
+    for nodo, padre in camino.items():
+        if padre is not None:
+            G_bfs.add_edge(nodo, padre)
 
-
-# Funcion que toma BFS() y dibuja el camino que tomo el agente para llegar a la salida
-def dibujaBFS(Grafica):
-    # Dibujar el grafo
+    # Dibujar el grafo resultante del BFS
     pos = {(fila, columna): (columna, -fila) for fila in range(filas) for columna in range(columnas)}
-    nx.draw(Grafica, pos, with_labels=True, node_size=700, node_color='cyan', font_size=8, font_weight='bold')
+    nx.draw(G_bfs, pos, with_labels=True, node_size=700, node_color='cyan', font_size=8, font_weight='bold')
     plt.show()
+    
+    
 
 
 
 
-#laberintoGrafica = matrixToGraph(laberinto)
+
+
+laberintoGrafica = matrixToGraph(laberinto)
 laberintoBSF = BFS(laberinto)
-dibujaBFS(laberintoBSF)
+#dibujaBFS(laberintoBSF)
 
 
 
@@ -250,7 +298,7 @@ Codigo que no se debe modificar
 
 
 
-algoritmoBRUTAL = backtrack(agente, laberinto)
+#algoritmoBRUTAL = backtrack(agente, laberinto)
 
 
 print("Representacion grafica de los pasos seguidos por el agente para la solucion final: \n")
