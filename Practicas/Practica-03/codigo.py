@@ -205,6 +205,12 @@ inicial "E" (o donde inicie el agente)
 '''
 
 
+def obtener_ruta_mas_corta(inicio, fin, camino):
+    ruta = [fin]
+    while ruta[-1] != inicio:
+        ruta.append(camino[ruta[-1]])
+    return ruta[::-1]
+
     
 def BFS(Laberinto):
     G = nx.Graph()
@@ -268,6 +274,10 @@ def BFS(Laberinto):
                     # Almacenar el camino que se ha seguido para llegar al vecino
                     camino[vecino] = actual
 
+    # Obtener la ruta más corta
+    ruta_mas_corta = obtener_ruta_mas_corta(inicioVertice, finVertice, camino)
+    print("Ruta más corta:", ruta_mas_corta)
+
     # Construir la nueva gráfica con los nodos y aristas alcanzables por BFS
     G_bfs = nx.Graph()
     for nodo, padre in camino.items():
@@ -277,6 +287,13 @@ def BFS(Laberinto):
     # Dibujar el grafo resultante del BFS
     pos = {(fila, columna): (columna, -fila) for fila in range(filas) for columna in range(columnas)}
     nx.draw(G_bfs, pos, with_labels=True, node_size=700, node_color='cyan', font_size=8, font_weight='bold')
+    plt.show()
+
+    # Dibujamos la ruta mas corta
+    pos = {(fila, columna): (columna, -fila) for fila in range(filas) for columna in range(columnas)}
+    nx.draw(G_bfs, pos, with_labels=True, node_size=700, node_color='cyan', font_size=8, font_weight='bold')
+    nx.draw_networkx_nodes(G_bfs, pos, nodelist=ruta_mas_corta, node_color='red', node_size=700)
+    nx.draw_networkx_edges(G_bfs, pos, edgelist=[(ruta_mas_corta[i], ruta_mas_corta[i+1]) for i in range(len(ruta_mas_corta)-1)], edge_color='red', width=2)
     plt.show()
     
     
