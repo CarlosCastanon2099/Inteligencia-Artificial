@@ -98,6 +98,43 @@ laberinto = [
 # pip install networkx
 # import matplotlib.pyplot as plt
 
+
+'''
+Primero implementamos una funcion que dibuje el grafo de la matriz para trabajar sobre ella e implementar BFS o DFS
+'''
+
+def matrixToGraph(laberinto):
+    G = nx.Graph()
+
+    filas = len(laberinto)
+    columnas = len(laberinto[0])
+
+    # Crear nodos
+    for fila in range(filas):
+        for columna in range(columnas):
+            # Agregar nodo con su posición como atributo
+            G.add_node((fila, columna))
+
+    # Crear aristas
+    for fila in range(filas):
+        for columna in range(columnas):
+            # Verificar si la celda actual es un pasillo (0 o "E" o "S")
+            if laberinto[fila][columna] == 0 or laberinto[fila][columna] == "E" or laberinto[fila][columna] == "S":
+                # Agregar aristas a las celdas vecinas que también son pasillos
+                if fila > 0 and laberinto[fila - 1][columna] == 0:
+                    G.add_edge((fila, columna), (fila - 1, columna))
+                if fila < filas - 1 and laberinto[fila + 1][columna] == 0:
+                    G.add_edge((fila, columna), (fila + 1, columna))
+                if columna > 0 and laberinto[fila][columna - 1] == 0:
+                    G.add_edge((fila, columna), (fila, columna - 1))
+                if columna < columnas - 1 and laberinto[fila][columna + 1] == 0:
+                    G.add_edge((fila, columna), (fila, columna + 1))
+
+    # Dibujar el grafo
+    pos = {(fila, columna): (columna, -fila) for fila in range(filas) for columna in range(columnas)}
+    #nx.draw(G, pos, with_labels=True, node_size=700, node_color='cyan', font_size=8, font_weight='bold')
+    #plt.show()
+
 def dibujar_grafo_laberinto(laberinto):
     G = nx.Graph()
 
@@ -127,7 +164,7 @@ def dibujar_grafo_laberinto(laberinto):
 
     # Dibujar el grafo
     pos = {(fila, columna): (columna, -fila) for fila in range(filas) for columna in range(columnas)}
-    nx.draw(G, pos, with_labels=True, node_size=700, node_color='skyblue', font_size=8, font_weight='bold')
+    nx.draw(G, pos, with_labels=True, node_size=700, node_color='cyan', font_size=8, font_weight='bold')
     plt.show()
 
 # Representación del laberinto
@@ -139,13 +176,78 @@ laberinto = [
     [ 0,   0,  0,    1,   "S" ]
 ]
 
+xAGENTE = 0
+yAGENTE = 0
 
-dibujar_grafo_laberinto(laberinto)
+agente = Agente([xAGENTE,yAGENTE])
+
+# Funcion que recibe la version matricial del laberinto y regresa la posicion (x,y) de la primera "S" que
+# encuentre en el laberinto
+
+def doxeaLaS(laberinto):
+    for i in range(len(laberinto)):
+        for j in range(len(laberinto[0])):
+            if laberinto[i][j] == "S":
+                return (i,j)
+
+
+# dibujar_grafo_laberinto(laberinto)
+
+'''
+Implementacion de BFS
+
+Usando matrixToGraph tomaremos el laberinto y lo convertiremos en una grafica
+a la cual le aplicaremos el algoritmo de BFS para encontrar la salida "S" desde un vertice
+inicial "E" (o donde inicie el agente)
+'''
+
+
+def BFS(Laberinto):
+    G = nx.Graph()
+    matrixToGraph(Laberinto)
+
+    # Vertice Inicial (E)
+    inicio = (xAGENTE,yAGENTE)
+
+    # Vertice Final (S)
+    fin = doxeaLaS(Laberinto)
+    
+    # Algoritmo BFS
+    visitados = set()
+    cola = [inicio]
+    visitados.add(inicio)
+    while len(cola) > 0:
+        actual = cola.pop(0)
+        if actual == fin:
+            return True
+        for vecino in G.neighbors(actual):
+            if vecino not in visitados:
+                visitados.add(vecino)
+                cola.append(vecino)
+    return False
+
+
+
+# Funcion que toma BFS() y dibuja el camino que tomo el agente para llegar a la salida
+def dibujaBFS(Grafica):
+    # Dibujar el grafo
+    pos = {(fila, columna): (columna, -fila) for fila in range(filas) for columna in range(columnas)}
+    nx.draw(Grafica, pos, with_labels=True, node_size=700, node_color='cyan', font_size=8, font_weight='bold')
+    plt.show()
 
 
 
 
-agente = Agente([0,0])
+#laberintoGrafica = matrixToGraph(laberinto)
+laberintoBSF = BFS(laberinto)
+dibujaBFS(laberintoBSF)
+
+
+
+'''
+Codigo que no se debe modificar
+'''
+
 
 
 algoritmoBRUTAL = backtrack(agente, laberinto)
