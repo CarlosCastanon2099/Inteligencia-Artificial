@@ -227,6 +227,10 @@ def BFS(Laberinto):
     # Crear nodos
     for fila in range(filas):
         for columna in range(columnas):
+            if laberinto[fila][columna] == "E":
+                inicio = (fila, columna)  # Establecer el vértice inicial
+            elif laberinto[fila][columna] == "S":
+                fin = (fila, columna)  # Establecer el vértice final
             # Agregar nodo con su posición como atributo
             G.add_node((fila, columna))
 
@@ -284,13 +288,16 @@ def BFS(Laberinto):
         if padre is not None:
             G_bfs.add_edge(nodo, padre)
 
+
     # Dibujar el grafo resultante del BFS
     pos = {(fila, columna): (columna, -fila) for fila in range(filas) for columna in range(columnas)}
-    nx.draw(G_bfs, pos, with_labels=True, node_size=700, node_color='cyan', font_size=8, font_weight='bold')
+    # node_shapes = ["E" if nodo == inicioVertice else "S" if nodo == finVertice else "0" for nodo in G_bfs.nodes()]
+    nx.draw(G_bfs, pos, with_labels=True, node_size=700, node_color='cyan', font_size=8, font_weight='bold') # node_shape=node_shapes
     plt.show()
 
     # Dibujamos la ruta mas corta
     pos = {(fila, columna): (columna, -fila) for fila in range(filas) for columna in range(columnas)}
+    
     nx.draw(G_bfs, pos, with_labels=True, node_size=700, node_color='cyan', font_size=8, font_weight='bold')
     nx.draw_networkx_nodes(G_bfs, pos, nodelist=ruta_mas_corta, node_color='red', node_size=700)
     nx.draw_networkx_edges(G_bfs, pos, edgelist=[(ruta_mas_corta[i], ruta_mas_corta[i+1]) for i in range(len(ruta_mas_corta)-1)], edge_color='red', width=2)
