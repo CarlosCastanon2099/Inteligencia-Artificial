@@ -1,5 +1,12 @@
 import matplotlib.pyplot as plt
 import networkx as nx
+from matplotlib.animation import FuncAnimation
+
+import numpy as np
+from IPython import display
+from networkx.drawing.nx_agraph import graphviz_layout
+from IPython.display import HTML
+
 
 class Agente:
     def __init__(self, posicion):
@@ -192,7 +199,7 @@ def doxeaLaS(laberinto):
 
 
 ############################################
-dibujar_grafo_laberinto(laberinto)
+#dibujar_grafo_laberinto(laberinto)        #
 ############################################
 
 '''
@@ -211,6 +218,10 @@ def obtener_ruta_mas_corta(inicio, fin, camino):
         ruta.append(camino[ruta[-1]])
     return ruta[::-1]
 
+
+
+
+    
     
 def BFS(Laberinto):
     G = nx.Graph()
@@ -307,11 +318,214 @@ def BFS(Laberinto):
 
 
 
+def BFS_animation(laberinto):
+    G = nx.Graph()
+
+    # Vertice Inicial (E)
+    inicio = (xAGENTE, yAGENTE)
+
+    # Vertice Final (S)
+    fin = doxeaLaS(laberinto)
+
+    filas = len(laberinto)
+    columnas = len(laberinto[0])
+
+    # Crear nodos
+    for fila in range(filas):
+        for columna in range(columnas):
+            if laberinto[fila][columna] == "E":
+                inicio = (fila, columna)  # Establecer el vértice inicial
+            elif laberinto[fila][columna] == "S":
+                fin = (fila, columna)  # Establecer el vértice final
+            # Agregar nodo con su posición como atributo
+            G.add_node((fila, columna))
+
+    # Crear aristas
+    for fila in range(filas):
+        for columna in range(columnas):
+            # Verificar si la celda actual es un pasillo (0 o "E" o "S")
+            if laberinto[fila][columna] == 0 or laberinto[fila][columna] == "E" or laberinto[fila][columna] == "S":
+                # Agregar aristas a las celdas vecinas que también son pasillos
+                if fila > 0 and laberinto[fila - 1][columna] == 0:
+                    G.add_edge((fila, columna), (fila - 1, columna))
+                if fila < filas - 1 and laberinto[fila + 1][columna] == 0:
+                    G.add_edge((fila, columna), (fila + 1, columna))
+                if columna > 0 and laberinto[fila][columna - 1] == 0:
+                    G.add_edge((fila, columna), (fila, columna - 1))
+                if columna < columnas - 1 and laberinto[fila][columna + 1] == 0:
+                    G.add_edge((fila, columna), (fila, columna + 1))
+
+    # Algoritmo BFS
+    inicioVertice = inicio
+    finVertice = fin
+    
+    # Cola para almacenar los nodos que se van a visitar
+    cola = [inicioVertice]
+    # Conjunto para almacenar los nodos que ya se visitaron
+    visitados = set()
+    # Diccionario para almacenar el camino que se ha seguido para llegar a cada nodo
+    camino = {inicioVertice: None}
+    
+    # Lista para almacenar los grafos en cada iteración
+    grafos = []
+
+    # Mientras la cola no está vacía
+    while cola:
+        # Construir el grafo actual
+        G_bfs = nx.Graph()
+        for nodo, padre in camino.items():
+            if padre is not None:
+                G_bfs.add_edge(nodo, padre)
+        grafos.append(G_bfs.copy())
+
+        # Sacar el primer nodo de la cola
+        actual = cola.pop(0)
+        # Si el nodo actual es el nodo final, terminar
+        if actual == finVertice:
+            break
+        # Si el nodo actual no ha sido visitado
+        if actual not in visitados:
+            # Marcar el nodo actual como visitado
+            visitados.add(actual)
+            # Agregar los vecinos del nodo actual a la cola
+            for vecino in G.neighbors(actual):
+                if vecino not in visitados:
+                    cola.append(vecino)
+                    # Almacenar el camino que se ha seguido para llegar al vecino
+                    camino[vecino] = actual
+
+    # Obtener la ruta más corta
+    ruta_mas_corta = obtener_ruta_mas_corta(inicioVertice, finVertice, camino)
+    print("Ruta más corta:", ruta_mas_corta)
+
+    return grafos, ruta_mas_corta
+
+def update(frame):
+    ax.clear()
+    nx.draw(grafos[frame], pos, with_labels=True, node_size=700, node_color='cyan', font_size=8, font_weight='bold')
+    plt.title(f'Iteración {frame+1}')
+
+    
+
+
+ 
+grafos, ruta_mas_corta = BFS_animation(laberinto)
+pos = {(fila, columna): (columna, -fila) for fila in range(len(laberinto)) for columna in range(len(laberinto[0]))}
+
+fig, ax = plt.subplots()
+ani = FuncAnimation(fig, update, frames=len(grafos), interval=1000, repeat=False)
+plt.show()
 
 
 
-laberintoGrafica = matrixToGraph(laberinto)
+'''
+
+def BFS_animation2(laberinto):
+    G = nx.Graph()
+
+    # Vertice Inicial (E)
+    inicio = (xAGENTE, yAGENTE)
+
+    # Vertice Final (S)
+    fin = doxeaLaS(laberinto)
+
+    filas = len(laberinto)
+    columnas = len(laberinto[0])
+
+    # Crear nodos
+    for fila in range(filas):
+        for columna in range(columnas):
+            if laberinto[fila][columna] == "E":
+                inicio = (fila, columna)  # Establecer el vértice inicial
+            elif laberinto[fila][columna] == "S":
+                fin = (fila, columna)  # Establecer el vértice final
+            # Agregar nodo con su posición como atributo
+            G.add_node((fila, columna))
+
+    # Crear aristas
+    for fila in range(filas):
+        for columna in range(columnas):
+            # Verificar si la celda actual es un pasillo (0 o "E" o "S")
+            if laberinto[fila][columna] == 0 or laberinto[fila][columna] == "E" or laberinto[fila][columna] == "S":
+                # Agregar aristas a las celdas vecinas que también son pasillos
+                if fila > 0 and laberinto[fila - 1][columna] == 0:
+                    G.add_edge((fila, columna), (fila - 1, columna))
+                if fila < filas - 1 and laberinto[fila + 1][columna] == 0:
+                    G.add_edge((fila, columna), (fila + 1, columna))
+                if columna > 0 and laberinto[fila][columna - 1] == 0:
+                    G.add_edge((fila, columna), (fila, columna - 1))
+                if columna < columnas - 1 and laberinto[fila][columna + 1] == 0:
+                    G.add_edge((fila, columna), (fila, columna + 1))
+
+    # Algoritmo BFS
+    inicioVertice = inicio
+    finVertice = fin
+    
+    # Cola para almacenar los nodos que se van a visitar
+    cola = [inicioVertice]
+    # Conjunto para almacenar los nodos que ya se visitaron
+    visitados = set()
+    # Diccionario para almacenar el camino que se ha seguido para llegar a cada nodo
+    camino = {inicioVertice: None}
+    
+    # Lista para almacenar los grafos en cada iteración
+    grafos = []
+
+    # Mientras la cola no está vacía
+    while cola:
+        # Construir el grafo actual
+        G_bfs = nx.Graph()
+        for nodo, padre in camino.items():
+            if padre is not None:
+                G_bfs.add_edge(nodo, padre)
+        grafos.append(G_bfs.copy())
+
+        # Sacar el primer nodo de la cola
+        actual = cola.pop(0)
+        # Si el nodo actual es el nodo final, terminar
+        if actual == finVertice:
+            break
+        # Si el nodo actual no ha sido visitado
+        if actual not in visitados:
+            # Marcar el nodo actual como visitado
+            visitados.add(actual)
+            # Agregar los vecinos del nodo actual a la cola
+            for vecino in G.neighbors(actual):
+                if vecino not in visitados:
+                    cola.append(vecino)
+                    # Almacenar el camino que se ha seguido para llegar al vecino
+                    camino[vecino] = actual
+
+    # Obtener la ruta más corta
+    ruta_mas_corta = obtener_ruta_mas_corta(inicioVertice, finVertice, camino)
+    print("Ruta más corta:", ruta_mas_corta)
+
+    return grafos, ruta_mas_corta
+
+def update2(frame):
+    ax.clear()
+    nx.draw(grafos[frame], pos2, with_labels=True, node_size=700, node_color='cyan', font_size=8, font_weight='bold')
+    nx.draw_networkx_nodes(grafos[frame], pos2, nodelist=ruta_mas_corta, node_color='red', node_size=700)
+    nx.draw_networkx_edges(grafos[frame], pos2, edgelist=[(ruta_mas_corta[i], ruta_mas_corta[i+1]) for i in range(len(ruta_mas_corta)-1)], edge_color='red', width=2)
+    plt.title(f'Iteración {frame+1}')
+
+    
+
+
+ 
+grafos, ruta_mas_corta = BFS_animation2(laberinto)
+pos2 = {(fila, columna): (columna, -fila) for fila in range(len(laberinto)) for columna in range(len(laberinto[0]))}
+
+fig, ax = plt.subplots()
+ani2 = FuncAnimation(fig, update2, frames=len(grafos), interval=1000, repeat=False)
+plt.show()
+'''
+
+
+#laberintoGrafica = matrixToGraph(laberinto)
 laberintoBSF = BFS(laberinto)
+#generaGifBFS = BFSGif(laberinto)
+
 #dibujaBFS(laberintoBSF)
 
 
