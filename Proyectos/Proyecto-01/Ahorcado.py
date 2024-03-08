@@ -6,6 +6,7 @@ from Busqueda_genetica import genetica
 MAXINTENTOS = 6
 
 def iniciar_juego(palabra, algoritmo):
+    
     letras_usadas = []
     print("La palabra a adivinar es: ", palabra)
     print("El algoritmo seleccionado es: ", algoritmo_a_nombre(algoritmo))
@@ -20,11 +21,11 @@ def iniciar_juego(palabra, algoritmo):
     while True:
         print("Correcta: " + " ".join(palabra_clave))
         if algoritmo == '1':
-            letra = no_informada(palabra, letras_usadas)
+            letra = no_informada(palabra_clave, letras_usadas)
         elif algoritmo == '2':
-            letra = informada(palabra, letras_usadas)
+            letra = informada(palabra_clave, letras_usadas)
         elif algoritmo == '3':
-            letra = genetica(palabra, letras_usadas)
+            letra = genetica(palabra_clave, letras_usadas)
         print(letra)
 
         letras_usadas.append(letra)
@@ -40,7 +41,7 @@ def iniciar_juego(palabra, algoritmo):
         else:
             for i in range(len(palabra)):
                 if palabra[i] == letra:
-                    palabra_clave = palabra_clave[:i] + letra + palabra_clave[i+1:]
+                    palabra_clave = palabra_clave[:i] + letra + palabra_clave[i+1:] 
 
             if "_" not in palabra_clave:
                     print("Sorependentemente lo ha logrado WAOS")
@@ -81,6 +82,8 @@ def mostrar_menu():
             except Exception as e:
                 print("Ocurrio un error:", e)
                 continue
+        elif len(palabra) == 0:
+            print("\nOops! La palabra esta vacia, por favor ingrese una palabra con al menos una letra:")
         elif tiene_acentos(palabra):
             try:
                 print("\nOops! La palabra ingresada tiene acentos, por favor ingrese una palabra sin acentos:")
