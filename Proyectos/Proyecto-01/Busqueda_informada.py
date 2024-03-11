@@ -33,7 +33,7 @@ def informada(palabra, letras_usadas):
             if letra not in letras_usadas:
                 return letra
     
-    print("Palabra en coincidencia: " + coincidencia)
+    # print("Palabra en coincidencia: " + coincidencia)
     for letra_comun in letras:
         if letra_comun in coincidencia and letra_comun not in letras_usadas:
             return letra_comun
@@ -48,11 +48,12 @@ def obtenerPatron(palabra, letras_usadas):
         else:
             patron += letra
     patron += '$'
-    print("El patron regex a buscar: " + patron)
+    # print("El patron regex a buscar: " + patron)
     return patron
 
-
+'''
 if __name__ == "__main__":
-    print( "Palabra recibida : \"p_blo\" " )
-    print("Letras usadas = ['p','b','l','o']")
-    print("Letra a buscar: " + informada("p_blo", ['p','b','l','o']))
+    print( "Palabra recibida : \"d_fne\" " )
+    print("Letras usadas = ['d','f','n','e']")
+    print("Letra a buscar: " + informada("d_fne", ['d','f','n','e']))
+'''
