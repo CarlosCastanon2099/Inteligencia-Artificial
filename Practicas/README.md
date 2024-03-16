@@ -8,9 +8,10 @@
 </div>
 
 > -  Practica 01: <em> Desarollo de un Chatbot con ChatterBot </em>
-> -  Practica 02: <em> Laberinto con back-tracking </em>
+> -  Practica 02: <em> Laberinto con Back-Tracking </em>
 > -  Practica 03: <em> Exploradores de Laberinto (DFS y BFS) </em>
-> -  Practica 04: <em> La poderosa A* </em>
+> -  Practica 04: <em> La poderosa A* en el Laberinto </em>
+> -  Practica 05: <em> Algoritmos Genéticos </em>
 > -  Practica 0n: <em> Practica 0n. </em>
 
 
