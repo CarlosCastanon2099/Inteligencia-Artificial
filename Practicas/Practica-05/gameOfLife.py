@@ -29,7 +29,7 @@ pantalla_info = pygame.display.Info()
 # Calculamos dinámicamente el tamaño de las celdas de acuerdo a la altura de la pantalla donde se 
 # despliega la aplicación, para ello multiplicamos el tamaño y número de celdas y verificamos
 # que no exceda la altura.
-while celda_tam * n_celdas_y < pantalla_info.current_h - 200: #-150 que utilizan los botones inferiores
+while celda_tam * n_celdas_y < pantalla_info.current_h - 150: #-150 que utilizan los botones inferiores
     celda_tam += 1
 
 # Configuramos la pantalla en la que desplegaremos la cuadrícula
