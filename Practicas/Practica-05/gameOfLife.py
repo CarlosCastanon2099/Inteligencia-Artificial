@@ -1,6 +1,5 @@
 import pygame
 import numpy as np
-import math
 
 # Dimensiones de la cuadrícula y de las celulas (las celdas de la cuadricula)
 n_celdas_x = 50
