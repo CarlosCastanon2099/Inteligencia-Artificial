@@ -1,12 +1,10 @@
 import pygame
 import numpy as np
+import math
 
 # Dimensiones de la cuadrícula y de las celulas (las celdas de la cuadricula)
 n_celdas_x = 50
 n_celdas_y = 50
-celda_tam = 15
-# Tamaño de las celdas de la cuadrícula, al modificar este valor se modifica el tamaño de las celdas de la cuadricula
-# Y por ende, también el de toda la pantalla
 
 # Colores 😈
 BLANCO = (255, 255, 255)
@@ -20,6 +18,19 @@ CELESTE = (152, 245, 255)
 
 # Inicializamos a Pygame
 pygame.init()
+
+# Tamaño de las celdas de la cuadrícula, al modificar este valor se modifica el tamaño de las celdas de la cuadricula
+# Y por ende, también el de toda la pantalla
+celda_tam = 0
+
+# Obtenemos la información de la pantalla
+pantalla_info = pygame.display.Info()
+
+# Calculamos dinámicamente el tamaño de las celdas de acuerdo a la altura de la pantalla donde se 
+# despliega la aplicación, para ello multiplicamos el tamaño y número de celdas y verificamos
+# que no exceda la altura.
+while celda_tam * n_celdas_y < pantalla_info.current_h - 200: #-150 que utilizan los botones inferiores
+    celda_tam += 1
 
 # Configuramos la pantalla en la que desplegaremos la cuadrícula
 pantalla_tam = (n_celdas_x * celda_tam, n_celdas_y * celda_tam + 50)
