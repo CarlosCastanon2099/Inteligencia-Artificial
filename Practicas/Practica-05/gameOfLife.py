@@ -61,18 +61,35 @@ def dibujar(tablero):
                              1)  # Dibujamos la cuadricula
 
     # Dibujar botones
-    pygame.draw.rect(pantalla, MORADO, (10, pantalla_tam[1] - 40, 30, 30))  # Botón de Pausa
-    pygame.draw.rect(pantalla, AZUL, (50, pantalla_tam[1] - 40, 30, 30))  # Botón de Play
-    pygame.draw.rect(pantalla, ROJO, (90, pantalla_tam[1] - 40, 30, 30))  # Botón para borrar toda la cuadricula
+    #pygame.draw.rect(pantalla, MORADO, (10, pantalla_tam[1] - 40, 30, 30))  # Botón de Pausa
+    #pygame.draw.rect(pantalla, AZUL, (50, pantalla_tam[1] - 40, 30, 30))    # Botón de Play
+    #pygame.draw.rect(pantalla, ROJO, (90, pantalla_tam[1] - 40, 30, 30))    # Botón para borrar toda la cuadricula
 
-    pygame.draw.rect(pantalla, NEGRO, (10, pantalla_tam[1] - 40, 30, 30),
-                     2)  # Color para el contorno del botón de Pausa
-    pygame.draw.rect(pantalla, NEGRO, (50, pantalla_tam[1] - 40, 30, 30),
-                     2)  # Color para el contorno del boton de Play
-    pygame.draw.rect(pantalla, NEGRO, (90, pantalla_tam[1] - 40, 30, 30),
-                     2)  # Color para el contorno del botón de borrado
+    #pygame.draw.rect(pantalla, NEGRO, (10, pantalla_tam[1] - 40, 30, 30),2)  # Color para el contorno del botón de Pausa
+    #pygame.draw.rect(pantalla, NEGRO, (50, pantalla_tam[1] - 40, 30, 30),2)  # Color para el contorno del boton de Play
+    #pygame.draw.rect(pantalla, NEGRO, (90, pantalla_tam[1] - 40, 30, 30),2)  # Color para el contorno del botón de borrado
+            
+    # Cargar imágenes
+    imagen_pausa = pygame.image.load("Imagenes/Pausa.png")
+    imagen_play = pygame.image.load("Imagenes/PlayDefinitivo.png")
+    imagen_limpiar = pygame.image.load("Imagenes/Borrado-Stop.png")
 
-    # Texto con el numero de generaciones y celulas vivas
+    # Escalar imágenes al tamaño deseado
+    imagen_pausa = pygame.transform.scale(imagen_pausa, (30, 30))
+    imagen_play = pygame.transform.scale(imagen_play, (30, 30))
+    imagen_limpiar = pygame.transform.scale(imagen_limpiar, (30, 30))
+
+    # Dibujar imágenes en lugar de botones
+    pantalla.blit(imagen_pausa, (10, pantalla_tam[1] - 40))
+    pantalla.blit(imagen_play, (50, pantalla_tam[1] - 40))
+    pantalla.blit(imagen_limpiar, (90, pantalla_tam[1] - 40))
+
+    # Posiciones de los botones
+    posicion_pausa = (10, pantalla_tam[1] - 40)
+    posicion_play = (50, pantalla_tam[1] - 40)
+    posicion_borrar = (90, pantalla_tam[1] - 40)
+
+    # # Texto con el numero de generaciones y celulas vivas
     font = pygame.font.Font(None, 24)
 
     texto = font.render("Generaciones: " + str(generaciones), True, NEGRO)
@@ -80,6 +97,52 @@ def dibujar(tablero):
 
     texto = font.render("Celulas vivas: " + str(celulas_vivas), True, NEGRO)
     pantalla.blit(texto, (pantalla_tam[0] - 200, pantalla_tam[1] - 20))
+'''
+import pygame
+
+# Inicializar pygame
+pygame.init()
+
+# Definir colores
+NEGRO = (0, 0, 0)
+
+# Definir la pantalla y dimensiones
+pantalla_tam = (400, 200)
+pantalla = pygame.display.set_mode(pantalla_tam)
+pygame.display.set_caption("Botones con imágenes")
+
+# Cargar imágenes
+imagen_pausa = pygame.image.load('pausa.png')
+imagen_play = pygame.image.load('play.png')
+imagen_borrar = pygame.image.load('borrar.png')
+
+
+
+# Bucle principal
+ejecutando = True
+while ejecutando:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            ejecutando = False
+
+    # Dibujar botones con imágenes
+    pantalla.blit(imagen_pausa, posicion_pausa)
+    pantalla.blit(imagen_play, posicion_play)
+    pantalla.blit(imagen_borrar, posicion_borrar)
+
+    # Dibujar contorno de los botones
+    pygame.draw.rect(pantalla, NEGRO, (*posicion_pausa, 30, 30), 2)
+    pygame.draw.rect(pantalla, NEGRO, (*posicion_play, 30, 30), 2)
+    pygame.draw.rect(pantalla, NEGRO, (*posicion_borrar, 30, 30), 2)
+
+    # Actualizar pantalla
+    pygame.display.flip()
+
+# Salir del programa
+pygame.quit()
+
+'''
+
 
 
 # Inicializamos el tablero y sus variables
