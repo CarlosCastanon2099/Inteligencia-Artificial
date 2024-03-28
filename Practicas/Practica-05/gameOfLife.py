@@ -15,6 +15,12 @@ GRIS = (128, 128, 128)
 MORADO = (128, 0, 128)
 CELESTE = (152, 245, 255)
 
+# Colores mas Colorful 😈😈😈
+ROJOFUERTE = (89, 2, 2)
+ROJOBONITO = (191, 4, 4)
+AZULFUERTE = (4, 104, 191)
+AZULCLARITO = (5, 175, 242)
+
 # Inicializamos a Pygame
 pygame.init()
 
@@ -43,21 +49,19 @@ pygame.display.set_caption("Juego de la Vida de Conway")
 # en muy poco tiempo y no porque al probar este programa llegamos al millón a la velocidad de la luz XD
 reloj = pygame.time.Clock()
 
-
 # Función para contar las celulas vivas de todo el tablero
 def contar_celulas_vivas(tablero):
     return np.sum(tablero)
 
-
 # Función para dibujar la cuadricula y las celulas (las celdas de la cuadrícula)
 def dibujar(tablero):
-    pantalla.fill(GRIS)  # Definimos el color que queremos para el fondo de la pantalla
+    pantalla.fill(NEGRO)  # Definimos el color que queremos para el fondo de la pantalla
     for y in range(n_celdas_y):
         for x in range(n_celdas_x):
             if tablero[x, y]:
                 pygame.draw.rect(pantalla, CELESTE,
                                  (x * celda_tam, y * celda_tam, celda_tam, celda_tam))  # Dibujamos las celulas vivas
-            pygame.draw.rect(pantalla, NEGRO, (x * celda_tam, y * celda_tam, celda_tam, celda_tam),
+            pygame.draw.rect(pantalla, GRIS, (x * celda_tam, y * celda_tam, celda_tam, celda_tam),
                              1)  # Dibujamos la cuadricula
 
     # Dibujar botones
@@ -68,34 +72,40 @@ def dibujar(tablero):
     #pygame.draw.rect(pantalla, NEGRO, (10, pantalla_tam[1] - 40, 30, 30),2)  # Color para el contorno del botón de Pausa
     #pygame.draw.rect(pantalla, NEGRO, (50, pantalla_tam[1] - 40, 30, 30),2)  # Color para el contorno del boton de Play
     #pygame.draw.rect(pantalla, NEGRO, (90, pantalla_tam[1] - 40, 30, 30),2)  # Color para el contorno del botón de borrado
-            
+        
     # Cargar imágenes
     imagen_pausa = pygame.image.load("Imagenes/Pausa.png")
     imagen_play = pygame.image.load("Imagenes/PlayDefinitivo.png")
     imagen_limpiar = pygame.image.load("Imagenes/Borrado-Stop.png")
+    imagen_aleatorio = pygame.image.load("Imagenes/Aleatorio.png")
 
     # Escalar imágenes al tamaño deseado
     imagen_pausa = pygame.transform.scale(imagen_pausa, (30, 30))
     imagen_play = pygame.transform.scale(imagen_play, (30, 30))
     imagen_limpiar = pygame.transform.scale(imagen_limpiar, (30, 30))
+    imagen_aleatorio = pygame.transform.scale(imagen_aleatorio, (30, 30))
 
     # Dibujar imágenes en lugar de botones
     pantalla.blit(imagen_pausa, (10, pantalla_tam[1] - 40))
     pantalla.blit(imagen_play, (50, pantalla_tam[1] - 40))
     pantalla.blit(imagen_limpiar, (90, pantalla_tam[1] - 40))
+    pantalla.blit(imagen_aleatorio, (130, pantalla_tam[1] - 40))
 
     # Posiciones de los botones
     posicion_pausa = (10, pantalla_tam[1] - 40)
     posicion_play = (50, pantalla_tam[1] - 40)
     posicion_borrar = (90, pantalla_tam[1] - 40)
+    posicion_aleatorio = (130, pantalla_tam[1] - 40)
 
     # # Texto con el numero de generaciones y celulas vivas
     font = pygame.font.Font(None, 24)
-
-    texto = font.render("Generaciones: " + str(generaciones), True, NEGRO)
+    
+    #texto = font.render("Generaciones: " + str(generaciones), True, NEGRO)
+    texto = font.render("Generaciones: " + str(generaciones), True, BLANCO)
     pantalla.blit(texto, (pantalla_tam[0] - 200, pantalla_tam[1] - 40))
 
-    texto = font.render("Celulas vivas: " + str(celulas_vivas), True, NEGRO)
+    #texto = font.render("Celulas vivas: " + str(celulas_vivas), True, NEGRO)
+    texto = font.render("Celulas vivas: " + str(celulas_vivas), True, BLANCO)
     pantalla.blit(texto, (pantalla_tam[0] - 200, pantalla_tam[1] - 20))
 '''
 import pygame
@@ -176,6 +186,12 @@ while ejecutando:
                 tablero = np.zeros((n_celdas_x, n_celdas_y), dtype=bool)
                 generaciones = 0
                 celulas_vivas = 0
+                jugando = False
+            # Boton para generar un tablero aleatorio
+            elif 130 <= pos[0] <= 160 and pantalla_tam[1] - 40 <= pos[1] <= pantalla_tam[1] - 10:
+                tablero = np.random.choice([False, True], (n_celdas_x, n_celdas_y), p=[0.7, 0.3])
+                generaciones = 0
+                celulas_vivas = contar_celulas_vivas(tablero)
                 jugando = False
             else:  # Si no se hizo clic en un boton, verificar si se hizo clic en una celda del tablero
                 if not jugando:  # Con este poderoso if evitamos que se modifique el tablero por el usuario mientras se genera alguna generacion
