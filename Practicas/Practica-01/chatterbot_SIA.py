@@ -11,7 +11,7 @@ chat = ChatBot('Recomendabot',
                 logic_adapters=[ 
                     {
                         "import_path": "chatterbot.logic.BestMatch",
-                        "statement_comparison_function": "chatterbot.comparisons.LevenshteinDistance",
+                        "statement_comparison_function": "chatterbot.comparisons.LevenshteinDistance", 
                     }
                 ],
                 )
