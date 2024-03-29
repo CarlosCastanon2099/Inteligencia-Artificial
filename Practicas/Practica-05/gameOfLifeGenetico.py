@@ -139,12 +139,6 @@ def dibujar(tablero):
     pantalla.blit(imagen_limpiar, (90, pantalla_tam[1] - 40))
     pantalla.blit(imagen_aleatorio, (130, pantalla_tam[1] - 40))
 
-    # Posiciones de los botones
-    posicion_pausa = (10, pantalla_tam[1] - 40)
-    posicion_play = (50, pantalla_tam[1] - 40)
-    posicion_borrar = (90, pantalla_tam[1] - 40)
-    posicion_aleatorio = (130, pantalla_tam[1] - 40)
-
     # # Texto con el numero de generaciones y celulas vivas
     font = pygame.font.Font(None, 24)
     
@@ -225,10 +219,22 @@ while ejecutando:
                 if not jugando:  # Con este poderoso if evitamos que se modifique el tablero por el usuario mientras se genera alguna generacion
                     cel_x, cel_y = pos[0] // celda_tam, pos[1] // celda_tam
                     if 0 <= cel_x < n_celdas_x and 0 <= cel_y < n_celdas_y:
-                        tablero[cel_x, cel_y] = Celula(AZULCLARITO)
-                        celulas_azules.add((cel_x,cel_y))
-                        celulas_muertas.remove((cel_x,cel_y))
-                        celulas_vivas = len(celulas_azules) + len(celulas_rojas)
+                        if tablero[cel_x, cel_y].esCelulaMuerta():
+                            tablero[cel_x, cel_y] = Celula(AZULCLARITO)
+                            celulas_azules.add((cel_x,cel_y))
+                            celulas_muertas.remove((cel_x,cel_y))
+
+                        elif tablero[cel_x, cel_y].esCelulaAzul():
+                            tablero[cel_x, cel_y] = Celula(ROJOFUERTE)
+                            celulas_rojas.add((cel_x,cel_y))
+                            celulas_azules.remove((cel_x,cel_y))
+
+                        else:
+                            tablero[cel_x, cel_y] = Celula(NEGRO)
+                            celulas_muertas.add((cel_x,cel_y))
+                            celulas_rojas.remove((cel_x,cel_y))
+                celulas_vivas = len(celulas_azules) + len(celulas_rojas)
+                        
 
     # Dibujamos el tablero
     dibujar(tablero)
@@ -250,11 +256,14 @@ while ejecutando:
                     tablero_siguiente[x, y] = Celula(NEGRO)
                     celulas_muertas.add((x,y))
                     celulas_azules.remove((x,y))
-                elif tablero[x, y].esCelulaMuerta() and vecinos == 3:  # En caso de que la celula este muerta y tenga exactamente 3 vecinos vivos
+                elif (tablero[x, y].esCelulaMuerta() or tablero[x, y].esCelulaRoja()) and vecinos == 3:  # En caso de que la celula este muerta y tenga exactamente 3 vecinos vivos
                     # La célula revive y ahora esta viva 😎
                     tablero_siguiente[x, y] = Celula(AZULCLARITO)
                     celulas_azules.add((x,y))
-                    celulas_muertas.remove((x,y))
+                    if tablero[x, y].esCelulaMuerta():
+                        celulas_muertas.remove((x,y))
+                    else:
+                        celulas_rojas.remove((x,y))
         tablero = tablero_siguiente
         celulas_vivas = len(celulas_azules)
         reloj.tick(5)  # Velocidad con la que se van a generar las generaciones
