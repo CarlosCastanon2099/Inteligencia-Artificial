@@ -90,7 +90,7 @@ Lo cual deberia verse de esta forma en la terminal:
 
 Al ejecutar lo anterior deberiamos ver lo siguiente:
 ```Haskell
-(myenv) batman@master-system:~/Inteligencia-Artificial/Practicas/Practica-01$ python3 chatterbot_SIA.py
+(myenv) batman@brother-eye:~/Inteligencia-Artificial/Practicas/Practica-01$ python3 chatterbot_SIA.py
 List Trainer: [####################] 100%
 List Trainer: [####################] 100%
 List Trainer: [####################] 100%
