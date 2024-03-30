@@ -11,7 +11,7 @@
 > -  Practica 02: <em> Laberinto con Back-Tracking </em>
 > -  Practica 03: <em> Exploradores de Laberinto (DFS y BFS) </em>
 > -  Practica 04: <em> La poderosa A* en el Laberinto </em>
-> -  Practica 05: <em> Algoritmos Genéticos </em>
+> -  Practica 05: <em> Algoritmos Genéticos en el Juego de la Vida </em>
 > -  Practica 0n: <em> Practica 0n. </em>
 
 
