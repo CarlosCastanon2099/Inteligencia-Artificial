@@ -202,8 +202,8 @@ while ejecutando:
             elif 90 <= pos[0] <= 120 and pantalla_tam[1] - 40 <= pos[1] <= pantalla_tam[1] - 10:
                 tablero.fill(Celula(NEGRO))
                 celulas_muertas = encontrar_celulas(tablero, NEGRO)
-                celulas_azules = encontrar_celulas(tablero, ROJOFUERTE)
-                celulas_rojas = encontrar_celulas(tablero, AZULCLARITO)
+                celulas_azules = encontrar_celulas(tablero, AZULCLARITO)
+                celulas_rojas = encontrar_celulas(tablero, ROJOFUERTE)
                 celulas_vivas = len(celulas_azules) + len(celulas_rojas)
                 jugando = False
             # Boton para generar un tablero aleatorio
@@ -211,8 +211,8 @@ while ejecutando:
                 tablero = np.random.choice([Celula(NEGRO), Celula(ROJOFUERTE), Celula(AZULCLARITO)], (n_celdas_x, n_celdas_y), p=[0.5, 0.3, 0.2])
                 generaciones = 0
                 celulas_muertas = encontrar_celulas(tablero, NEGRO)
-                celulas_azules = encontrar_celulas(tablero, ROJOFUERTE)
-                celulas_rojas = encontrar_celulas(tablero, AZULCLARITO)
+                celulas_azules = encontrar_celulas(tablero, AZULCLARITO)
+                celulas_rojas = encontrar_celulas(tablero, ROJOFUERTE)
                 celulas_vivas = len(celulas_azules) + len(celulas_rojas)
                 jugando = False
             else:  # Si no se hizo clic en un boton, verificar si se hizo clic en una celda del tablero
@@ -250,20 +250,38 @@ while ejecutando:
         # (esta copia solo se guarda en código y no se dibuja o se muestra en pantalla)
         for x in range(n_celdas_x):
             for y in range(n_celdas_y):
-                vecinos = encontrar_vecinos(tablero, x, y, AZULCLARITO)
-                if tablero[x, y].esCelulaAzul() and (vecinos < 2 or vecinos > 3):  # En caso de que la célula este viva y tenga menos de 2 o mas de 3
+                celula_actual = tablero[x,y]
+                if celula_actual.esCelulaRoja():
+                    vecinos = encontrar_vecinos(tablero, x, y, ROJOFUERTE)
+                    if vecinos < 2 or vecinos > 3: # En caso de que la célula este viva y tenga menos de 2 o mas de 3
                     # vecinos vivos, la célula muere brutalmente 😢
-                    tablero_siguiente[x, y] = Celula(NEGRO)
-                    celulas_muertas.add((x,y))
-                    celulas_azules.remove((x,y))
-                elif (tablero[x, y].esCelulaMuerta() or tablero[x, y].esCelulaRoja()) and vecinos == 3:  # En caso de que la celula este muerta y tenga exactamente 3 vecinos vivos
-                    # La célula revive y ahora esta viva 😎
-                    tablero_siguiente[x, y] = Celula(AZULCLARITO)
-                    celulas_azules.add((x,y))
-                    if tablero[x, y].esCelulaMuerta():
-                        celulas_muertas.remove((x,y))
-                    else:
+                        tablero_siguiente[x, y] = Celula(NEGRO)
+                        celulas_muertas.add((x,y))
                         celulas_rojas.remove((x,y))
+                elif celula_actual.esCelulaAzul():
+                    vecinos = encontrar_vecinos(tablero, x, y, AZULCLARITO)
+                    if vecinos < 2 or vecinos > 3: # En caso de que la célula este viva y tenga menos de 2 o mas de 3
+                    # vecinos vivos, la célula muere brutalmente 😢
+                        tablero_siguiente[x, y] = Celula(NEGRO)
+                        celulas_muertas.add((x,y))
+                        celulas_azules.remove((x,y))
+                elif celula_actual.esCelulaMuerta():
+                    vecinos_azules = encontrar_vecinos(tablero, x, y, AZULCLARITO)
+                    vecinos_rojos = encontrar_vecinos(tablero, x, y, ROJOFUERTE)
+                    if vecinos_azules == 3: # En caso de que la celula este muerta y tenga exactamente 3 vecinos vivos
+                    # La célula revive y ahora esta viva 😎
+                        tablero_siguiente[x, y] = Celula(AZULCLARITO)
+                        celulas_azules.add((x,y))
+                        celulas_muertas.remove((x,y))                        
+                    elif vecinos_rojos == 3: # En caso de que la celula este muerta y tenga exactamente 3 vecinos vivos
+                    # La célula revive y ahora esta viva 😎
+                        tablero_siguiente[x, y] = Celula(ROJOFUERTE)
+                        celulas_rojas.add((x,y))
+                        celulas_muertas.remove((x,y))
+                    elif vecinos_rojos == 3 and vecinos_azules == 3: # Si existe un empate priorizamos el crecimiento de celulas rojas
+                        tablero_siguiente[x, y] = Celula(ROJOFUERTE)
+                        celulas_rojas.add((x,y))
+                        celulas_muertas.remove((x,y))
         tablero = tablero_siguiente
         celulas_vivas = len(celulas_azules)
         reloj.tick(5)  # Velocidad con la que se van a generar las generaciones
