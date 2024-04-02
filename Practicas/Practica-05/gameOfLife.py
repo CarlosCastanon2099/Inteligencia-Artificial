@@ -107,51 +107,6 @@ def dibujar(tablero):
     #texto = font.render("Celulas vivas: " + str(celulas_vivas), True, NEGRO)
     texto = font.render("Celulas vivas: " + str(celulas_vivas), True, BLANCO)
     pantalla.blit(texto, (pantalla_tam[0] - 200, pantalla_tam[1] - 20))
-'''
-import pygame
-
-# Inicializar pygame
-pygame.init()
-
-# Definir colores
-NEGRO = (0, 0, 0)
-
-# Definir la pantalla y dimensiones
-pantalla_tam = (400, 200)
-pantalla = pygame.display.set_mode(pantalla_tam)
-pygame.display.set_caption("Botones con imágenes")
-
-# Cargar imágenes
-imagen_pausa = pygame.image.load('pausa.png')
-imagen_play = pygame.image.load('play.png')
-imagen_borrar = pygame.image.load('borrar.png')
-
-
-
-# Bucle principal
-ejecutando = True
-while ejecutando:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            ejecutando = False
-
-    # Dibujar botones con imágenes
-    pantalla.blit(imagen_pausa, posicion_pausa)
-    pantalla.blit(imagen_play, posicion_play)
-    pantalla.blit(imagen_borrar, posicion_borrar)
-
-    # Dibujar contorno de los botones
-    pygame.draw.rect(pantalla, NEGRO, (*posicion_pausa, 30, 30), 2)
-    pygame.draw.rect(pantalla, NEGRO, (*posicion_play, 30, 30), 2)
-    pygame.draw.rect(pantalla, NEGRO, (*posicion_borrar, 30, 30), 2)
-
-    # Actualizar pantalla
-    pygame.display.flip()
-
-# Salir del programa
-pygame.quit()
-
-'''
 
 
 
@@ -212,14 +167,11 @@ while ejecutando:
         # (esta copia solo se guarda en código y no se dibuja o se muestra en pantalla)
         for x in range(n_celdas_x):
             for y in range(n_celdas_y):
-                vecinos = np.sum(tablero[(x - 1):(x + 2), (y - 1):(y + 2)]) - tablero[
-                    x, y]  # Contamos los vecinos vivos de cada célula (celda)
-                if tablero[x, y] and (
-                        vecinos < 2 or vecinos > 3):  # En caso de que la célula este viva y tenga menos de 2 o mas de 3
+                vecinos = np.sum(tablero[(x - 1):(x + 2), (y - 1):(y + 2)]) - tablero[x, y]  # Contamos los vecinos vivos de cada célula (celda)
+                if tablero[x, y] and (vecinos < 2 or vecinos > 3):  # En caso de que la célula este viva y tenga menos de 2 o mas de 3
                     # vecinos vivos, la célula muere brutalmente 😢
                     tablero_siguiente[x, y] = False
-                elif not tablero[
-                    x, y] and vecinos == 3:  # En caso de que la celula este muerta y tenga exactamente 3 vecinos vivos
+                elif not tablero[x, y] and vecinos == 3:  # En caso de que la celula este muerta y tenga exactamente 3 vecinos vivos
                     # La célula revive y ahora esta viva 😎
                     tablero_siguiente[x, y] = True
         tablero = tablero_siguiente

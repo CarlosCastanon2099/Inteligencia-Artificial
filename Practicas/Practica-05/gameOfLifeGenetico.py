@@ -1,88 +1,107 @@
 import pygame
 import numpy as np
 import random 
+  
+### Algotimos genetico para el juego de la vida de Conway
 
-# Dimensiones de la cuadrícula y de las celulas (las celdas de la cuadricula)
+"""    
+🕹️ Pygame
+"""
+pygame.init()
+# Obtenemos la información de la pantalla
+pantalla_info = pygame.display.Info()
+# Nombre de la aplicación 🐎
+pygame.display.set_caption("Juego de la Vida de Conway")
+# Reloj para controlar la velocidad de las generaciones. Esta variable claramente existe 
+# porque sabíamos que si no existía podíamos llegar a la generación 1000 en muy poco tiem-
+# po y no porque al probar este programa llegamos al millón a la velocidad de la luz XD
+reloj = pygame.time.Clock()
+
+"""    
+⬛ Dimensiones de la cuadrícula y celdas
+"""
 n_celdas_x = 50
 n_celdas_y = 50
+# Tamaño de las celdas de la cuadrícula, al modificar este valor se modifica el tamaño de 
+# las celdas de la cuadricula y por ende, también el de toda la pantalla.
+celda_tam = 0
+# Calculamos dinámicamente el tamaño de las celdas de acuerdo a la altura de la pantalla 
+# donde se despliega la aplicación, para ello multiplicamos el tamaño y número de celdas 
+# y verificamos que no exceda la altura.
+while celda_tam * n_celdas_y < pantalla_info.current_h - 150: # -150 que utilizan los botones inferiores
+    celda_tam += 1
+# Configuramos la pantalla en la que desplegaremos la cuadrícula
+pantalla_tam = (n_celdas_x * celda_tam, n_celdas_y * celda_tam + 50)
+pantalla = pygame.display.set_mode(pantalla_tam)
 
-# Colores 😈
+"""    
+🖍️ Colores 
+"""
+# Colores colorful 😈😈😈
 BLANCO = (255, 255, 255)
 NEGRO = (0, 0, 0)
-ROJO = (255, 0, 0)
+ROJO = (255, 0, 0) #(255, 128, 128) rojo segun mas clarito 
 AZUL = (0, 0, 255)
 VERDE = (0, 255, 0)
 GRIS = (128, 128, 128)
 MORADO = (128, 0, 128)
 CELESTE = (152, 245, 255)
 
-# Colores mas Colorful 😈😈😈
-# celulaDefault = Celula(NEGRO, False, 0, 0)
-# celulaRoja = Celula(ROJOFUERTE, False, 0, 0)
-# celulaAzul = Celula(AZULCLARITO, False, 0, 0)
+# Colores más colorful 😈😈😈
 ROJOFUERTE = (89, 2, 2)
 ROJOBONITO = (191, 4, 4)
 AZULFUERTE = (4, 104, 191)
 AZULCLARITO = (5, 175, 242)
 
-# Inicializamos a Pygame
-pygame.init()
-
-# Tamaño de las celdas de la cuadrícula, al modificar este valor se modifica el tamaño de las celdas de la cuadricula
-# Y por ende, también el de toda la pantalla
-celda_tam = 0
-
-# Obtenemos la información de la pantalla
-pantalla_info = pygame.display.Info()
-
-# Calculamos dinámicamente el tamaño de las celdas de acuerdo a la altura de la pantalla donde se 
-# despliega la aplicación, para ello multiplicamos el tamaño y número de celdas y verificamos
-# que no exceda la altura.
-while celda_tam * n_celdas_y < pantalla_info.current_h - 150: #-150 que utilizan los botones inferiores
-    celda_tam += 1
-
-# Configuramos la pantalla en la que desplegaremos la cuadrícula
-pantalla_tam = (n_celdas_x * celda_tam, n_celdas_y * celda_tam + 50)
-pantalla = pygame.display.set_mode(pantalla_tam)
-
-# Nombre de la aplicación 🐎
-pygame.display.set_caption("Juego de la Vida de Conway")
-
-# Reloj para controlar la velocidad de las generaciones
-# esta variable claramente existe porque sabíamos que si no existía podíamos llegar a la generación 1000
-# en muy poco tiempo y no porque al probar este programa llegamos al millón a la velocidad de la luz XD
-reloj = pygame.time.Clock()
-
-# Clase Celula
-#   Atributos: Color de la celula, estado (viva o muerta)
+"""    
+🦠 Clase Celula
+Atributos: 
+    - Color 
+    - Estado (viva o muerta)
+"""
 class Celula:
     def __init__(self, color):
         self.color = color
         #self.estado = estado 
-        #self.x = x
-        #self.y = y
-    
-    # Metodo para saber si es una celula muerta
+        
     def esCelulaMuerta(self):
         return self.color == NEGRO
+    
+    def esCelulaViva(self):
+        return self.color == ROJOFUERTE or self.color == AZULCLARITO
     
     def esCelulaRoja(self):
         return self.color == ROJOFUERTE
     
     def esCelulaAzul(self):
         return self.color == AZULCLARITO
-    
-    # Metodo para saber si es una celula viva (roja o azul)
-    def esCelulaViva(self):
-        return self.color == ROJOFUERTE or self.color == AZULCLARITO
-    
 
+"""    
+🦠 Clase Celula Azul 🔵
+Atributos: 
+    - Ataque
+    - Defensa
+"""
+class CelulaAzul(Celula):
+    def __init__(self):
+        super().__init__(AZULCLARITO)
+        self.gen_ataque = False
+        self.gen_defensa = False
 
+    def adquirirGenAtaque(self):
+        self.gen_ataque = True
 
+    def adquirirGenDefensa(self):
+        self.gen_defensa = True
+
+"""    
+🦠 Funciones de Celulas 👾
+"""
 # Función para contar las celulas vivas de todo el tablero
 def contar_celulas_vivas(tablero):
     return np.sum(tablero)
 
+# Funcion para encontrar celulas
 def encontrar_celulas(tablero, color_celula):
     celulas: set = set()
     for i in range(len(tablero)):
@@ -91,6 +110,7 @@ def encontrar_celulas(tablero, color_celula):
                 celulas.add((i,j))
     return celulas
 
+# Funcion para encontrar vecinos
 def encontrar_vecinos(tablero, x, y, color_celula) -> int:
     total = 0
     for i in range(-1,2):
@@ -101,7 +121,9 @@ def encontrar_vecinos(tablero, x, y, color_celula) -> int:
             if tablero[i+x,j+y].color == color_celula: total += 1
     return total
     
-
+"""    
+👾 Tablero
+"""
 # Función para dibujar la cuadricula y las celulas (las celdas de la cuadrícula)
 def dibujar(tablero):
     pantalla.fill(NEGRO)  # Definimos el color que queremos para el fondo de la pantalla
@@ -111,15 +133,6 @@ def dibujar(tablero):
                 pygame.draw.rect(pantalla, tablero[x, y].color, 
                                  (x * celda_tam, y * celda_tam, celda_tam, celda_tam))  # Dibujamos las celulas vivas
             pygame.draw.rect(pantalla, GRIS, (x * celda_tam, y * celda_tam, celda_tam, celda_tam),1)  # Dibujamos la cuadricula
-
-    # Dibujar botones
-    #pygame.draw.rect(pantalla, MORADO, (10, pantalla_tam[1] - 40, 30, 30))  # Botón de Pausa
-    #pygame.draw.rect(pantalla, AZUL, (50, pantalla_tam[1] - 40, 30, 30))    # Botón de Play
-    #pygame.draw.rect(pantalla, ROJO, (90, pantalla_tam[1] - 40, 30, 30))    # Botón para borrar toda la cuadricula
-
-    #pygame.draw.rect(pantalla, NEGRO, (10, pantalla_tam[1] - 40, 30, 30),2)  # Color para el contorno del botón de Pausa
-    #pygame.draw.rect(pantalla, NEGRO, (50, pantalla_tam[1] - 40, 30, 30),2)  # Color para el contorno del boton de Play
-    #pygame.draw.rect(pantalla, NEGRO, (90, pantalla_tam[1] - 40, 30, 30),2)  # Color para el contorno del botón de borrado
         
     # Cargar imágenes
     imagen_pausa = pygame.image.load("Imagenes/Pausa.png")
@@ -151,8 +164,6 @@ def dibujar(tablero):
     pantalla.blit(texto, (pantalla_tam[0] - 200, pantalla_tam[1] - 20))
 
 
-
-
 # Inicializamos el tablero y sus variables
 #tablero = np.zeros((n_celdas_x, n_celdas_y), dtype=object(Celula(NEGRO, False)))
     
@@ -165,25 +176,173 @@ tablero.fill(Celula(NEGRO))
 # for i in range(n_celdas_x):
 #     for j in range(n_celdas_y):
 #         tablero[i,j] = Celula(NEGRO)
+###########################################################################
 
+# Celula = |color|inmunidad      |ataque     |
+#          |     |mayor o igual  | numero par|
+
+
+# def iniciar_poblacion(self, ):
+
+
+
+# def fitness(self, ): 
+
+
+
+# def seleccion(self, ):
+
+
+
+# def cruce(self, ):
+
+
+
+# def mutacion(self, ):
+
+
+
+###########################################################################################
 
 # Iniciamos las generaciones en 0
+global generaciones 
 generaciones = 0
 
 # Iniciamos las celulas vivas en 0
+global celulas_vivas
 celulas_vivas = 0
 
 # Iniciamos a ejecutando y jugando en sus valores por defecto
+
+global ejecutando
 ejecutando = True
+
+global jugando
 jugando = False
 
 
 # celulaDefault = Celula(NEGRO, False, 0, 0)
 # celulaRoja    = Celula(ROJOFUERTE, False, 0, 0)
 # celulaAzul    = Celula(AZULCLARITO, False, 0, 0)
+global celulas_muertas
 celulas_muertas: set = encontrar_celulas(tablero, NEGRO)
+
+global celulas_azules
 celulas_azules: set = set()
+
+global celulas_rojas
 celulas_rojas: set = set()
+
+class Juego(tablero):
+    def __init__(self):
+        self.generaciones = 0
+        self.celulas_muertas = set()
+        self.celulas_azules = set()
+        self.celulas_rojas = set()
+
+    def generar_generacion(self, tablero):
+        self.generaciones += 1
+        tablero_siguiente = np.copy(tablero)
+
+        for x in range(n_celdas_x):
+            for y in range(n_celdas_y):
+                celula_actual = tablero[x, y]
+                self._aplicar_reglas(celula_actual, tablero_siguiente, x, y)
+
+        tablero = tablero_siguiente
+        self.celulas_vivas = len(self.celulas_azules)
+        reloj.tick(5)
+    
+    # Funcion de la regla (a)
+    # (a) Si una celula está viva y tiene dos o tres vecinas vivas, sobrevive.
+    def regla_a_azul(self, celula_actual, tablero_siguiente, x, y):
+        if celula_actual.esCelulaRoja():
+            vecinos = encontrar_vecinos(tablero, x, y, AZULCLARITO)
+            if vecinos < 2 or vecinos > 3:
+                tablero_siguiente[x, y] = Celula(NEGRO)
+                self.celulas_muertas.add((x, y))
+                self.celulas_rojas.remove((x, y))
+    
+    # Funcion de la regla (a)
+    # (a) Si una celula está viva y tiene dos o tres vecinas vivas, sobrevive.
+    def regla_a_roja(self, celula_actual, tablero_siguiente, x, y):
+        if celula_actual.esCelulaRoja():
+            vecinos = encontrar_vecinos(tablero, x, y, ROJOFUERTE)
+            if vecinos < 2 or vecinos > 3:
+                tablero_siguiente[x, y] = Celula(NEGRO)
+                self.celulas_muertas.add((x, y))
+                self.celulas_rojas.remove((x, y))
+                
+    # Funcion de la regla (b)
+    # (b) Si una celula está muerta y tiene tres vecinas vivas, nace.
+    def regla_b_azul(self, celula_actual, tablero_siguiente, x, y):
+        vecinos_azules = 0  # Inicializar contador de vecinos azules
+        if celula_actual.esCelulaMuerta():
+            vecinos = encontrar_vecinos(tablero, x, y, celula_actual.color)
+            for vecino in vecinos:
+                if tablero[vecino[0]][vecino[1]].color == AZULCLARITO:  # Comprobar si el vecino es azul
+                    vecinos_azules += 1  # Incrementar el contador de vecinos azules
+            # Comprobar regla de vida para la célula actual basada en el número de vecinos azules
+            if vecinos_azules == 3:
+                tablero_siguiente[x][y] = Celula(NEGRO)
+                self.celulas_muertas.add((x, y))
+                self.celulas_azules.remove((x, y))
+    
+    # Funcion de la regla (b)
+    # (b) Si una celula está muerta y tiene tres vecinas vivas, nace.
+    def regla_b_roja(self, celula_actual, tablero_siguiente, x, y):
+        vecinos_azules = 0  # Inicializar contador de vecinos azules
+        if celula_actual.esCelulaMuerta():
+            vecinos = encontrar_vecinos(tablero, x, y, celula_actual.color)
+            for vecino in vecinos:
+                if tablero[vecino[0]][vecino[1]].color == ROJOFUERTE:  # Comprobar si el vecino es azul
+                    vecinos_azules += 1  # Incrementar el contador de vecinos azules
+            # Comprobar regla de vida para la célula actual basada en el número de vecinos azules
+            if vecinos_azules == 3:
+                tablero_siguiente[x][y] = Celula(NEGRO)
+                self.celulas_muertas.add((x, y))
+                self.celulas_azules.remove((x, y))
+        
+    # Funcion de la regla (c)
+    # (c) Si una celula está viva y tiene más de tres vecinas vivas, muere.
+    def regla_c(self, celula_actual, tablero_siguiente, x, y):
+        if celula_actual.esCelulaMuerta():
+            vecinos_azules = encontrar_vecinos(tablero, x, y, AZULCLARITO)
+            vecinos_rojos = encontrar_vecinos(tablero, x, y, ROJOFUERTE)
+            if vecinos_azules == 3:
+                tablero_siguiente[x, y] = Celula(AZULCLARITO)
+                self.celulas_azules.add((x, y))
+                self.celulas_muertas.remove((x, y))
+            elif vecinos_rojos == 3:
+                tablero_siguiente[x, y] = Celula(ROJOFUERTE)
+                self.celulas_rojas.add((x, y))
+                self.celulas_muertas.remove((x, y))
+            elif vecinos_rojos == 3 and vecinos_azules == 3:
+                tablero_siguiente[x, y] = Celula(ROJOFUERTE)
+                self.celulas_rojas.add((x, y))
+                self.celulas_muertas.remove((x, y))
+    
+    # Funcion para aplicar las reglas a,b y c
+    def _aplicar_reglas(self, celula_actual, tablero_siguiente, x, y):
+        self.regla_a_azul(celula_actual, tablero_siguiente, x, y)
+        self.regla_a_roja(celula_actual, tablero_siguiente, x, y)
+        self.regla_b_azul(celula_actual, tablero_siguiente, x, y)
+        self.regla_b_roja(celula_actual, tablero_siguiente, x, y)
+        self.regla_c(celula_actual, tablero_siguiente, x, y)
+
+    # Método para aplicar las reglas del juego si el juego está en curso
+    def jugandoo(self, tablero):
+        if jugando:
+            generaciones += 1  # Aumentamos el contador de generaciones
+            tablero_siguiente = np.copy(tablero)  # Creamos una copia del tablero actual
+            # Aplicamos las reglas a cada celda del tablero
+            for x in range(n_celdas_x):
+                for y in range(n_celdas_y):
+                    celula_actual = tablero[x, y]
+                    self._aplicar_reglas(celula_actual, tablero_siguiente, x, y)
+            tablero = tablero_siguiente  # Actualizamos el tablero con el siguiente estado
+            self.celulas_vivas = len(self.celulas_azules)  # Actualizamos el número de células vivas azules
+            reloj.tick(5)  # Velocidad con la que se van a generar las generaciones
 
 # Bucle principal
 while ejecutando:
@@ -221,14 +380,14 @@ while ejecutando:
                     if 0 <= cel_x < n_celdas_x and 0 <= cel_y < n_celdas_y:
                         if tablero[cel_x, cel_y].esCelulaMuerta():
                             tablero[cel_x, cel_y] = Celula(AZULCLARITO)
-                            celulas_azules.add((cel_x,cel_y))
+                            celulas_azules.add((cel_x,cel_y)) 
                             celulas_muertas.remove((cel_x,cel_y))
 
                         elif tablero[cel_x, cel_y].esCelulaAzul():
                             tablero[cel_x, cel_y] = Celula(ROJOFUERTE)
                             celulas_rojas.add((cel_x,cel_y))
                             celulas_azules.remove((cel_x,cel_y))
-
+                            
                         else:
                             tablero[cel_x, cel_y] = Celula(NEGRO)
                             celulas_muertas.add((cel_x,cel_y))
@@ -244,10 +403,15 @@ while ejecutando:
     # (b) Si una célula está muerta y tiene tres vecinas vivas, nace.
     # (c) Si una célula está viva y tiene más de tres vecinas vivas, muere.
     # IMPORTANTE: Este es el nucleo de el juego de la vida de Conway, aqui implementamos las reglas del juego
+
+    # Juego(tablero)
+    
     if jugando:
         generaciones += 1  # Aumentamos el contador de generaciones
-        tablero_siguiente = np.copy(tablero)    # Creamos una copia del tablero actual para poder modificarlo sin afectar el tablero original
-        # (esta copia solo se guarda en código y no se dibuja o se muestra en pantalla)
+    #     tablero_siguiente = np.copy(tablero)    # Creamos una copia del tablero actual para poder modificarlo sin afectar el tablero original
+    #     # (esta copia solo se guarda en código y no se dibuja o se muestra en pantalla)
+        
+        '''
         for x in range(n_celdas_x):
             for y in range(n_celdas_y):
                 celula_actual = tablero[x,y]
@@ -278,13 +442,14 @@ while ejecutando:
                         tablero_siguiente[x, y] = Celula(ROJOFUERTE)
                         celulas_rojas.add((x,y))
                         celulas_muertas.remove((x,y))
-                    elif vecinos_rojos == 3 and vecinos_azules == 3: # Si existe un empate priorizamos el crecimiento de celulas rojas
+                    elif vecinos_rojos == 3 and vecinos_azules == 3: # Si existe algun empate priorizamos el crecimiento de celulas rojas
                         tablero_siguiente[x, y] = Celula(ROJOFUERTE)
                         celulas_rojas.add((x,y))
                         celulas_muertas.remove((x,y))
         tablero = tablero_siguiente
         celulas_vivas = len(celulas_azules)
         reloj.tick(5)  # Velocidad con la que se van a generar las generaciones
+        '''
 
 # Comando poderoso para salir de Pygame 
 pygame.quit()
