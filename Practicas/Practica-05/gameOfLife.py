@@ -1,7 +1,7 @@
 import pygame
 import numpy as np
 
-# Dimensiones de la cuadrícula y de las celulas (las celdas de la cuadricula)
+# Dimensiones de la cuadricula y de las celulas (las celdas de la cuadricula)
 n_celdas_x = 50
 n_celdas_y = 50
 
@@ -24,36 +24,36 @@ AZULCLARITO = (5, 175, 242)
 # Inicializamos a Pygame
 pygame.init()
 
-# Tamaño de las celdas de la cuadrícula, al modificar este valor se modifica el tamaño de las celdas de la cuadricula
-# Y por ende, también el de toda la pantalla
+# Tamaño de las celdas de la cuadricula, al modificar este valor se modifica el tamaño de las celdas de la cuadricula
+# Y por ende, tambien el de toda la pantalla
 celda_tam = 0
 
-# Obtenemos la información de la pantalla
+# Obtenemos la informacion de la pantalla
 pantalla_info = pygame.display.Info()
 
-# Calculamos dinámicamente el tamaño de las celdas de acuerdo a la altura de la pantalla donde se 
-# despliega la aplicación, para ello multiplicamos el tamaño y número de celdas y verificamos
+# Calculamos dinamicamente el tamaño de las celdas de acuerdo a la altura de la pantalla donde se 
+# despliega la aplicacion, para ello multiplicamos el tamaño y numero de celdas y verificamos
 # que no exceda la altura.
 while celda_tam * n_celdas_y < pantalla_info.current_h - 150: #-150 que utilizan los botones inferiores
     celda_tam += 1
 
-# Configuramos la pantalla en la que desplegaremos la cuadrícula
+# Configuramos la pantalla en la que desplegaremos la cuadricula
 pantalla_tam = (n_celdas_x * celda_tam, n_celdas_y * celda_tam + 50)
 pantalla = pygame.display.set_mode(pantalla_tam)
 
-# Nombre de la aplicación 🐎
+# Nombre de la aplicacion 🐎
 pygame.display.set_caption("Juego de la Vida de Conway")
 
 # Reloj para controlar la velocidad de las generaciones
-# esta variable claramente existe porque sabíamos que si no existía podíamos llegar a la generación 1000
-# en muy poco tiempo y no porque al probar este programa llegamos al millón a la velocidad de la luz XD
+# esta variable claramente existe porque sabiamos que si no existia podiamos llegar a la generacion 1000
+# en muy poco tiempo y no porque al probar este programa llegamos al millon a la velocidad de la luz XD
 reloj = pygame.time.Clock()
 
-# Función para contar las celulas vivas de todo el tablero
+# Funcion para contar las celulas vivas de todo el tablero
 def contar_celulas_vivas(tablero):
     return np.sum(tablero)
 
-# Función para dibujar la cuadricula y las celulas (las celdas de la cuadrícula)
+# Funcion para dibujar la cuadricula y las celulas (las celdas de la cuadricula)
 def dibujar(tablero):
     pantalla.fill(NEGRO)  # Definimos el color que queremos para el fondo de la pantalla
     for y in range(n_celdas_y):
@@ -65,27 +65,27 @@ def dibujar(tablero):
                              1)  # Dibujamos la cuadricula
 
     # Dibujar botones
-    #pygame.draw.rect(pantalla, MORADO, (10, pantalla_tam[1] - 40, 30, 30))  # Botón de Pausa
-    #pygame.draw.rect(pantalla, AZUL, (50, pantalla_tam[1] - 40, 30, 30))    # Botón de Play
-    #pygame.draw.rect(pantalla, ROJO, (90, pantalla_tam[1] - 40, 30, 30))    # Botón para borrar toda la cuadricula
+    #pygame.draw.rect(pantalla, MORADO, (10, pantalla_tam[1] - 40, 30, 30))  # Boton de Pausa
+    #pygame.draw.rect(pantalla, AZUL, (50, pantalla_tam[1] - 40, 30, 30))    # Boton de Play
+    #pygame.draw.rect(pantalla, ROJO, (90, pantalla_tam[1] - 40, 30, 30))    # Boton para borrar toda la cuadricula
 
-    #pygame.draw.rect(pantalla, NEGRO, (10, pantalla_tam[1] - 40, 30, 30),2)  # Color para el contorno del botón de Pausa
+    #pygame.draw.rect(pantalla, NEGRO, (10, pantalla_tam[1] - 40, 30, 30),2)  # Color para el contorno del boton de Pausa
     #pygame.draw.rect(pantalla, NEGRO, (50, pantalla_tam[1] - 40, 30, 30),2)  # Color para el contorno del boton de Play
-    #pygame.draw.rect(pantalla, NEGRO, (90, pantalla_tam[1] - 40, 30, 30),2)  # Color para el contorno del botón de borrado
+    #pygame.draw.rect(pantalla, NEGRO, (90, pantalla_tam[1] - 40, 30, 30),2)  # Color para el contorno del boton de borrado
         
-    # Cargar imágenes
+    # Cargar imagenes
     imagen_pausa = pygame.image.load("Imagenes/Pausa.png")
     imagen_play = pygame.image.load("Imagenes/PlayDefinitivo.png")
     imagen_limpiar = pygame.image.load("Imagenes/Borrado-Stop.png")
     imagen_aleatorio = pygame.image.load("Imagenes/Aleatorio.png")
 
-    # Escalar imágenes al tamaño deseado
+    # Escalar imagenes al tamaño deseado
     imagen_pausa = pygame.transform.scale(imagen_pausa, (30, 30))
     imagen_play = pygame.transform.scale(imagen_play, (30, 30))
     imagen_limpiar = pygame.transform.scale(imagen_limpiar, (30, 30))
     imagen_aleatorio = pygame.transform.scale(imagen_aleatorio, (30, 30))
 
-    # Dibujar imágenes en lugar de botones
+    # Dibujar imagenes en lugar de botones
     pantalla.blit(imagen_pausa, (10, pantalla_tam[1] - 40))
     pantalla.blit(imagen_play, (50, pantalla_tam[1] - 40))
     pantalla.blit(imagen_limpiar, (90, pantalla_tam[1] - 40))
@@ -107,51 +107,6 @@ def dibujar(tablero):
     #texto = font.render("Celulas vivas: " + str(celulas_vivas), True, NEGRO)
     texto = font.render("Celulas vivas: " + str(celulas_vivas), True, BLANCO)
     pantalla.blit(texto, (pantalla_tam[0] - 200, pantalla_tam[1] - 20))
-'''
-import pygame
-
-# Inicializar pygame
-pygame.init()
-
-# Definir colores
-NEGRO = (0, 0, 0)
-
-# Definir la pantalla y dimensiones
-pantalla_tam = (400, 200)
-pantalla = pygame.display.set_mode(pantalla_tam)
-pygame.display.set_caption("Botones con imágenes")
-
-# Cargar imágenes
-imagen_pausa = pygame.image.load('pausa.png')
-imagen_play = pygame.image.load('play.png')
-imagen_borrar = pygame.image.load('borrar.png')
-
-
-
-# Bucle principal
-ejecutando = True
-while ejecutando:
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            ejecutando = False
-
-    # Dibujar botones con imágenes
-    pantalla.blit(imagen_pausa, posicion_pausa)
-    pantalla.blit(imagen_play, posicion_play)
-    pantalla.blit(imagen_borrar, posicion_borrar)
-
-    # Dibujar contorno de los botones
-    pygame.draw.rect(pantalla, NEGRO, (*posicion_pausa, 30, 30), 2)
-    pygame.draw.rect(pantalla, NEGRO, (*posicion_play, 30, 30), 2)
-    pygame.draw.rect(pantalla, NEGRO, (*posicion_borrar, 30, 30), 2)
-
-    # Actualizar pantalla
-    pygame.display.flip()
-
-# Salir del programa
-pygame.quit()
-
-'''
 
 
 
@@ -209,18 +164,15 @@ while ejecutando:
         generaciones += 1  # Aumentamos el contador de generaciones
         tablero_siguiente = np.copy(
             tablero)    # Creamos una copia del tablero actual para poder modificarlo sin afectar el tablero original
-        # (esta copia solo se guarda en código y no se dibuja o se muestra en pantalla)
+        # (esta copia solo se guarda en codigo y no se dibuja o se muestra en pantalla)
         for x in range(n_celdas_x):
             for y in range(n_celdas_y):
-                vecinos = np.sum(tablero[(x - 1):(x + 2), (y - 1):(y + 2)]) - tablero[
-                    x, y]  # Contamos los vecinos vivos de cada célula (celda)
-                if tablero[x, y] and (
-                        vecinos < 2 or vecinos > 3):  # En caso de que la célula este viva y tenga menos de 2 o mas de 3
-                    # vecinos vivos, la célula muere brutalmente 😢
+                vecinos = np.sum(tablero[(x - 1):(x + 2), (y - 1):(y + 2)]) - tablero[x, y]  # Contamos los vecinos vivos de cada celula (celda)
+                if tablero[x, y] and (vecinos < 2 or vecinos > 3):  # En caso de que la celula este viva y tenga menos de 2 o mas de 3
+                    # vecinos vivos, la celula muere brutalmente 😢
                     tablero_siguiente[x, y] = False
-                elif not tablero[
-                    x, y] and vecinos == 3:  # En caso de que la celula este muerta y tenga exactamente 3 vecinos vivos
-                    # La célula revive y ahora esta viva 😎
+                elif not tablero[x, y] and vecinos == 3:  # En caso de que la celula este muerta y tenga exactamente 3 vecinos vivos
+                    # La celula revive y ahora esta viva 😎
                     tablero_siguiente[x, y] = True
         tablero = tablero_siguiente
         celulas_vivas = contar_celulas_vivas(tablero)
