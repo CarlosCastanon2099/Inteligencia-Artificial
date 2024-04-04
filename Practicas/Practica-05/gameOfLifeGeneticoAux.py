@@ -131,6 +131,7 @@ def encontrar_celulas(tablero, color_celula):
     return celulas
 
 # Funcion para encontrar celulas vecinas
+# busca quienes tienen mejores genes los selecciona los usa como padres
 def encontrar_celulas_vecinas(tablero, x, y, color_celula) -> int:
     vecinos = set()
     for i in range(-1,2):
