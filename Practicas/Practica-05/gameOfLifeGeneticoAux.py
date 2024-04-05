@@ -261,10 +261,11 @@ class Juego:
 
     def seleccion(self, cantidad_padres):
         padres = []
+        candidatos = list(self.celulas_azules)  # Convertir el conjunto en una lista
         for _ in range(cantidad_padres): 
-            candidatos = random.sample(self.celulas_azules, 5)
             mejor_candidato = max(candidatos, key=lambda celula: self.fitness(*celula))
             padres.append(mejor_candidato)
+            candidatos.remove(mejor_candidato)  # Remover el candidato seleccionado para no repetirlo
         return padres
 
     def combinacion_de_genes(self, gen_padre, gen_madre):
