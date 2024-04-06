@@ -50,6 +50,7 @@ CELESTE = (152, 245, 255)
 # Colores mas colorful 😈😈😈
 ROJOFUERTE = (89, 2, 2)
 ROJOBONITO = (191, 4, 4)
+ROJOMASBONITO = (255, 128, 128) #(255, 128, 128) rojo segun mas clarito 
 AZULFUERTE = (4, 104, 191)
 AZULCLARITO = (5, 175, 242)
 
@@ -69,10 +70,10 @@ class Celula:
         return self.color == NEGRO
     
     def esCelulaViva(self):
-        return self.color == ROJOFUERTE or self.color == AZULCLARITO or self.color == AZULFUERTE
+        return self.color == ROJOBONITO or self.color == AZULCLARITO or self.color == AZULFUERTE
     
     def esCelulaRoja(self):
-        return self.color == ROJOFUERTE
+        return self.color == ROJOBONITO
     
     def esCelulaAzul(self):
         return self.color == AZULCLARITO or self.color == AZULFUERTE
@@ -81,7 +82,7 @@ class Celula:
         return self.poder
 
     def mutarGen(self, generacion):
-       self.poder = random.randrange(0, generacion+1)
+       self.poder = random.randrange(0, generacion)
 
     def print(self):
         print(f"Celula color: {self.color}, gen ataque: {self.gen_ataque}")
@@ -152,6 +153,21 @@ def dibujar(juego):
     #texto = font.render("Celulas vivas: " + str(celulas_vivas), True, NEGRO)
     texto = font.render("Celulas vivas: " + str(juego.celulas_vivas), True, BLANCO)
     pantalla.blit(texto, (pantalla_tam[0] - 200, pantalla_tam[1] - 20))
+    
+    #texto = font.render("Celulas vivas: " + str(celulas_vivas), True, NEGRO)
+    texto = font.render("Celulas azules: " + str(len(juego.celulas_azules)), True, AZULCLARITO)
+    pantalla.blit(texto, (pantalla_tam[0] - 500, pantalla_tam[1] - 40))
+
+    #texto = font.render("Celulas vivas: " + str(celulas_vivas), True, NEGRO)
+    texto = font.render("Celulas rojas: " + str(len(juego.celulas_rojas)), True, ROJOBONITO)
+    pantalla.blit(texto, (pantalla_tam[0] - 500, pantalla_tam[1] - 20))
+    
+    
+    #texto = font.render("Celulas vivas: " + str(celulas_vivas), True, NEGRO)
+    ganador = "Rojas" if (len(juego.celulas_rojas) > len(juego.celulas_azules)) else "Azules"
+    ganador_color = ROJOBONITO if (len(juego.celulas_rojas) > len(juego.celulas_azules)) else AZULCLARITO
+    texto = font.render("Ganando :" + ganador, True, ganador_color)
+    pantalla.blit(texto, (pantalla_tam[0] - 700, pantalla_tam[1] - 30))
 
 ###########################################################################
 
@@ -194,7 +210,7 @@ class Juego:
     # Implementacion operadores geneticos
 
     def fitness(self, x, y):
-        calificacion = self.tablero[x][y].poder - self.generaciones
+        calificacion = self.generaciones - self.tablero[x][y].poder
         if (calificacion < 0 ): return 0
         return calificacion
 
@@ -210,10 +226,10 @@ class Juego:
     def combinacion_de_genes(self, gen_padre, gen_madre):
         hijo = Celula(AZULCLARITO)
         probabilidad = random.random()
-        probabilidad_mutacion = 0.10  # Probabilidad de mutación del 10%
+        probabilidad_mutacion = 0.50  # Probabilidad de mutación del 50%
         if probabilidad < probabilidad_mutacion:
-            hijo.mutarGen(self.generaciones+5)
-        elif probabilidad < 0.45:
+            hijo.mutarGen(self.generaciones)
+        elif probabilidad < 0.75:
             hijo.poder = gen_padre
         else:
             hijo.poder = gen_madre
@@ -221,7 +237,7 @@ class Juego:
             
     def cruce(self, padre: Celula, madre: Celula):
         
-        cantidad_hijos_totales = 10
+        cantidad_hijos_totales = 3
         # Crear el hijo con los genes combinados de padre y vecino de la madre
         gen_padre = self.tablero[padre[0], padre[1]].getGenes()        
         gen_madre = self.tablero[madre[0], madre[1]].getGenes()
@@ -232,7 +248,7 @@ class Juego:
         for hijo in hijos:
             if (hijo_elegido.poder < hijo.poder):
                 hijo_elegido = hijo
-        if (hijo.poder - self.generaciones <= 0): hijo.color = AZULFUERTE
+        if (hijo.poder >= self.generaciones): hijo.color = AZULFUERTE
         return hijo
 
     
@@ -244,7 +260,8 @@ class Juego:
         celulas_padres = self.seleccion(num_padres)
         # Obtenemos la célula hija resultado del cruce de los padres
         # y posiblemente mutada
-        celula_hijo = self.cruce(celulas_padres[0], celulas_padres[1])        
+        celula_hijo = self.cruce(celulas_padres[0], celulas_padres[1])    
+        celula_hijo.poder += 1
         return celula_hijo
         
     
@@ -260,7 +277,7 @@ class Juego:
         celulas_azules_clarito = encontrar_celulas(self.tablero, AZULCLARITO)
         celulas_azules_fuerte = encontrar_celulas(self.tablero, AZULFUERTE)
         self.celulas_azules = celulas_azules_clarito | celulas_azules_fuerte
-        self.celulas_rojas = encontrar_celulas(self.tablero, ROJOFUERTE)
+        self.celulas_rojas = encontrar_celulas(self.tablero, ROJOBONITO)
     
     # Comienza la ejecucion del juego de la vida con la primer generacion
     def generar_generacion(self):
@@ -273,7 +290,7 @@ class Juego:
                 self._aplicar_reglas(celula_actual, tablero_siguiente, x, y)
 
         self.tablero = tablero_siguiente
-        self.celulas_vivas = len(self.celulas_azules)
+        self.celulas_vivas = len(self.celulas_azules) + len(self.celulas_rojas)
         reloj.tick(5)
 
     # Funcion de la regla (a) para las celulas azules.
@@ -303,7 +320,7 @@ class Juego:
             self.celulas_rojas.remove((x, y))
             return
         # En caso contrario se posiciona una celula de color rojo
-        vecinos = encontrar_vecinos(self.tablero, x, y, ROJOFUERTE)
+        vecinos = encontrar_vecinos(self.tablero, x, y, ROJOBONITO)
         if vecinos < 2 or vecinos > 3:
             tablero_siguiente[x, y] = Celula(NEGRO)
             self.celulas_muertas.add((x, y))
@@ -313,7 +330,7 @@ class Juego:
     # (c) Si una celula esta viva y tiene mas de tres vecinas vivas, muere.
     def regla_c(self, tablero_siguiente, x, y):
         vecinos_azules = encontrar_vecinos(self.tablero, x, y, AZULCLARITO) + encontrar_vecinos(self.tablero, x, y, AZULFUERTE)
-        vecinos_rojos = encontrar_vecinos(self.tablero, x, y, ROJOFUERTE)
+        vecinos_rojos = encontrar_vecinos(self.tablero, x, y, ROJOBONITO)
         if vecinos_azules == 3:
             # Al nacer una nueva célula azul ejecutamos el algoritmo genético
             # para esta nueva célula
@@ -322,7 +339,7 @@ class Juego:
             self.celulas_azules.add((x, y))
             self.celulas_muertas.remove((x, y))
         elif vecinos_rojos == 3:
-            tablero_siguiente[x, y] = Celula(ROJOFUERTE)
+            tablero_siguiente[x, y] = Celula(ROJOBONITO)
             self.celulas_rojas.add((x, y))
             self.celulas_muertas.remove((x, y))
     
@@ -352,7 +369,7 @@ class Juego:
                     celula_actual = self.tablero[x, y]
                     self._aplicar_reglas(celula_actual, tablero_siguiente, x, y)
             self.tablero = tablero_siguiente  # Actualizamos el tablero con el siguiente estado
-            self.celulas_vivas = len(self.celulas_azules)  # Actualizamos el numero de celulas vivas azules
+            self.celulas_vivas = len(self.celulas_azules)+ len(self.celulas_rojas)  # Actualizamos el numero de celulas vivas azules
             reloj.tick(5)  # Velocidad con la que se van a generar las generaciones
 
 #Creamos un juego nuevo
@@ -382,7 +399,7 @@ while juego.ejecutando:
                 juego.jugando = False
             # Boton para generar un tablero aleatorio
             elif 130 <= pos[0] <= 160 and pantalla_tam[1] - 40 <= pos[1] <= pantalla_tam[1] - 10: # BV
-                juego.tablero = np.random.choice([Celula(NEGRO), Celula(ROJOFUERTE), Celula(AZULCLARITO)], (n_celdas_x, n_celdas_y), p=[0.5, 0.3, 0.2])
+                juego.tablero = np.random.choice([Celula(NEGRO), Celula(ROJOBONITO), Celula(AZULCLARITO)], (n_celdas_x, n_celdas_y), p=[0.5, 0.3, 0.2])
                 juego.generaciones = 0
                 juego.actualiza_celulas()
                 juego.actualiza_celulas_vivas()
@@ -397,7 +414,7 @@ while juego.ejecutando:
                             juego.celulas_muertas.remove((cel_x,cel_y))
                         
                         elif juego.tablero[cel_x, cel_y].esCelulaAzul():
-                            juego.tablero[cel_x, cel_y] = Celula(ROJOFUERTE)
+                            juego.tablero[cel_x, cel_y] = Celula(ROJOBONITO)
                             juego.celulas_rojas.add((cel_x,cel_y))
                             juego.celulas_azules.remove((cel_x,cel_y))
                         
