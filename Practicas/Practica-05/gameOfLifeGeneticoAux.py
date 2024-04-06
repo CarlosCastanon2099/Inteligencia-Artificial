@@ -62,9 +62,8 @@ Atributos:
 class Celula:
     def __init__(self, color):
         self.color = color
-        self.gen_ataque = False
-        self.gen_defensa = False
-        #self.estado = estado 
+        # self.gen_ataque = True
+        self.poder = 1
         
     def esCelulaMuerta(self):
         return self.color == NEGRO
@@ -79,66 +78,13 @@ class Celula:
         return self.color == AZULCLARITO or self.color == AZULFUERTE
 
     def getGenes(self):
-        return (self.color, self.gen_ataque, self.gen_defensa)
+        return self.poder
 
-    def mutarGen(self):
-        # Seleccionamos un gen aleatorio entre ataque y defensa 
-        gen_a_mutar = random.choice([self.gen_ataque, self.gen_defensa])
-
-        if gen_a_mutar == self.gen_ataque:
-            #Mutamos el gen
-            self.gen_ataque = not self.gen_ataque
-        elif gen_a_mutar == self.gen_defensa:
-            #Mutamos el gen
-            self.gen_defensa = not self.gen_defensa
+    def mutarGen(self, generacion):
+       self.poder = random.randrange(0, generacion+1)
 
     def print(self):
-        print(f"Celula color: {self.color}, gen ataque: {self.gen_ataque}, gen_defensa: {self.gen_defensa}")
-
-"""    
-🦠 Clase Celula Azul 🔵
-Atributos: 
-    - Ataque
-    - Defensa
-"""
-"""
-class CelulaAzul(Celula):
-    def __init__(self):
-        super().__init__(AZULCLARITO) 
-        self.gen_ataque = False
-        self.gen_defensa = False
-
-    def adquirirGenAtaque(self):
-        self.gen_ataque = True
-        self.color = AZULFUERTE
-    
-    def adquirirGenDefensa(self):
-        self.gen_defensa = True
-        self.color = VERDE
-
-    def getGenes(self):
-        return (self.color, self.gen_ataque, self.gen_defensa)
-
-    def mutarGen(self):
-        # Seleccionamos un gen aleatorio entre ataque y defensa 
-        gen_a_mutar = random.choice([self.gen_ataque, self.gen_defensa])
-
-        if gen_a_mutar == self.gen_ataque:
-            #Mutamos el gen
-            self.gen_ataque = not self.gen_ataque
-            #return CelulaAzul(self.gen_ataque, self.gen_defensa)
-        elif gen_a_mutar == self.gen_defensa:
-            #Mutamos el gen
-            self.gen_defensa = not self.gen_defensa
-            #return CelulaAzul(self.gen_ataque, self.gen_defensa)
-"""
-"""    
-🦠 Funciones de Celulas 👾
-"""
-# Funcion para contar las celulas vivas de todo el tablero
-# No se utiliza
-"""def contar_celulas_vivas(tablero):
-    return np.sum(tablero)"""
+        print(f"Celula color: {self.color}, gen ataque: {self.gen_ataque}")
 
 # Funcion para encontrar celulas
 def encontrar_celulas(tablero, color_celula):
@@ -161,16 +107,9 @@ def encontrar_celulas_vecinas(tablero, x, y, color_celula) -> set:
             if tablero[i+x,j+y].color == color_celula: vecinos.add((i+x,j+y))
     return vecinos
 
-# Funcion para encontrar vecinos
+# Funcion para encontrar el número de vecinos
 def encontrar_vecinos(tablero, x, y, color_celula) -> int:
-    total = 0
-    for i in range(-1,2):
-        for j in range(-1,2):
-            if i+x >= len(tablero) or i+x <= 0: continue
-            if i == 0 and j == 0: continue
-            if j+y >= len(tablero) or j+y <= 0: continue
-            if tablero[i+x,j+y].color == color_celula: total += 1
-    return total
+    return len(encontrar_celulas_vecinas(tablero, x, y, color_celula))
     
 """    
 👾 Tablero
@@ -255,55 +194,47 @@ class Juego:
     # Implementacion operadores geneticos
 
     def fitness(self, x, y):
-        # Calcular la cantidad de vecinos vivos de la célula en la posición (x, y)
-        vecinos_vivos = encontrar_vecinos(self.tablero, x, y, AZULCLARITO) + encontrar_vecinos(self.tablero, x, y, AZULFUERTE)
-        return vecinos_vivos
+        calificacion = self.tablero[x][y].poder - self.generaciones
+        if (calificacion < 0 ): return 0
+        return calificacion
 
     def seleccion(self, cantidad_padres):
         padres = []
         candidatos = list(self.celulas_azules)  # Convertir el conjunto en una lista
-        for _ in range(cantidad_padres): 
-            mejor_candidato = max(candidatos, key=lambda celula: self.fitness(*celula))
+        for _ in range(cantidad_padres):         
+            mejor_candidato = min(candidatos, key=lambda celula: self.fitness(*celula))
             padres.append(mejor_candidato)
             candidatos.remove(mejor_candidato)  # Remover el candidato seleccionado para no repetirlo
         return padres
 
     def combinacion_de_genes(self, gen_padre, gen_madre):
-        gen_hijo = []
-        for gen1, gen2 in zip(gen_padre, gen_madre):
-            gen_hijo.append(gen1 if random.random() < 0.5 else gen2)
-        return gen_hijo
-    
-    def cruce(self, padre, madre):
-        # Seleccionar un vecino aleatorio de la madre para realizar la cruza
-        # Si no tiene vecinos se selecciona una célula azul al azar del tablero
-        vecinos_madre = encontrar_celulas_vecinas(self.tablero, madre[0], madre[1], AZULCLARITO)        
-        if vecinos_madre:
-            vecino_madre = random.choice(tuple(vecinos_madre))
+        hijo = Celula(AZULCLARITO)
+        probabilidad = random.random()
+        probabilidad_mutacion = 0.10  # Probabilidad de mutación del 10%
+        if probabilidad < probabilidad_mutacion:
+            hijo.mutarGen(self.generaciones+5)
+        elif probabilidad < 0.45:
+            hijo.poder = gen_padre
         else:
-            vecino_madre = random.choice(tuple(self.celulas_azules))
-
+            hijo.poder = gen_madre
+        return hijo
+            
+    def cruce(self, padre: Celula, madre: Celula):
         
+        cantidad_hijos_totales = 10
         # Crear el hijo con los genes combinados de padre y vecino de la madre
         gen_padre = self.tablero[padre[0], padre[1]].getGenes()        
-        gen_vecino_madre = self.tablero[vecino_madre[0], vecino_madre[1]].getGenes()
-        genes_hijo = self.combinacion_de_genes(gen_padre, gen_vecino_madre)
-        # Se colorea azul fuerte pues es una celula ya alterada en sus genes
-        hijo = Celula(AZULFUERTE)
-        # Actualizamos su información resultado de la cruza de los padres
-        hijo.gen_ataque = genes_hijo[1]
-        hijo.gen_defensa = genes_hijo[2]
-        # Devolvemos al hijo aplicando el operador de mutación
-        return self.mutacion(hijo)
+        gen_madre = self.tablero[madre[0], madre[1]].getGenes()
+        hijos: list[Celula] = []
+        for _ in range(cantidad_hijos_totales):
+            hijos.append(self.combinacion_de_genes(gen_padre, gen_madre))
+        hijo_elegido = Celula(AZULCLARITO)
+        for hijo in hijos:
+            if (hijo_elegido.poder < hijo.poder):
+                hijo_elegido = hijo
+        if (hijo.poder - self.generaciones <= 0): hijo.color = AZULFUERTE
+        return hijo
 
-    def mutacion(self, celula):
-        probabilidad_mutacion = 0.59  # Probabilidad de mutación del 59%
-        if random.random() < probabilidad_mutacion:
-            # Mutar uno de los genes de la célula con un nuevo valor aleatorio
-            celula.mutarGen() 
-            return celula
-        else:
-            return celula
     
     #Función para ejecutar el algoritmo genético
     def ejecuta_genetico(self):
@@ -345,7 +276,7 @@ class Juego:
         self.celulas_vivas = len(self.celulas_azules)
         reloj.tick(5)
 
-    # Funcion de la regla (a)
+    # Funcion de la regla (a) para las celulas azules.
     # (a) Si una celula esta viva y tiene dos o tres vecinas vivas, sobrevive.
     def regla_a_azul(self, tablero_siguiente, x, y):
         vecinos = encontrar_vecinos(self.tablero, x, y, AZULCLARITO) + encontrar_vecinos(self.tablero, x, y, AZULFUERTE)
@@ -354,9 +285,24 @@ class Juego:
             self.celulas_muertas.add((x, y))
             self.celulas_azules.remove((x, y))
     
-    # Funcion de la regla (a)
+    # Funcion de la regla (a) para las celulas rojas.
     # (a) Si una celula esta viva y tiene dos o tres vecinas vivas, sobrevive.
     def regla_a_roja(self, tablero_siguiente, x, y):
+        # Obtenemos los datos de los vecinos azules
+        vecinos_azules_fuertes = encontrar_vecinos(self.tablero, x, y, AZULFUERTE) 
+        vecinos_azules = encontrar_vecinos(self.tablero, x, y, AZULCLARITO) + vecinos_azules_fuertes 
+        
+        # Si es posible el nacimiento de una celula azul
+        # La posición tiene 3 vecinos azules y además alguna de las celulas vecinas
+        # tiene el gen de ataque
+        if (vecinos_azules == 3 and vecinos_azules_fuertes > 0):
+            # Creamos una nueva celula y se posiciona en el lugar del tablero
+            nueva_celula_azul = self.ejecuta_genetico()
+            tablero_siguiente[x, y] = nueva_celula_azul
+            self.celulas_azules.add((x, y))
+            self.celulas_rojas.remove((x, y))
+            return
+        # En caso contrario se posiciona una celula de color rojo
         vecinos = encontrar_vecinos(self.tablero, x, y, ROJOFUERTE)
         if vecinos < 2 or vecinos > 3:
             tablero_siguiente[x, y] = Celula(NEGRO)
@@ -379,13 +325,13 @@ class Juego:
             tablero_siguiente[x, y] = Celula(ROJOFUERTE)
             self.celulas_rojas.add((x, y))
             self.celulas_muertas.remove((x, y))
-
+    
     # Funcion para aplicar las reglas a,b y c
     # (a) Si una celula esta viva y tiene dos o tres vecinas vivas, sobrevive.
     # (b) Si una celula esta muerta y tiene tres vecinas vivas, nace.
     # (c) Si una celula esta viva y tiene mas de tres vecinas vivas, muere.
     # IMPORTANTE: Este es el nucleo de el juego de la vida de Conway, aqui implementamos las reglas del juego
-    def _aplicar_reglas(self, celula_actual, tablero_siguiente, x, y):
+    def _aplicar_reglas(self, celula_actual: Celula, tablero_siguiente, x, y):
         if celula_actual.esCelulaRoja():
             self.regla_a_roja(tablero_siguiente, x, y)
             #self.regla_b_roja(celula_actual, tablero_siguiente, x, y)
