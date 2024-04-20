@@ -13,7 +13,8 @@
 > -  Practica 04: <em> La poderosa A* en el Laberinto </em>
 > -  Practica 05: <em> Algoritmos Genéticos en el Juego de la Vida </em>
 > -  Practica 06: <em> Redes Bayesianas </em>
-> -  Practica 07: <em> Regresión Logística para estimar la Probabilidad de Abandono Escolar </em> 
+> -  Practica 07: <em> Regresión Logística para estimar la Probabilidad de Abandono Escolar </em>  
+> -  Practica 08: <em> Clasificación de Texto - Spam vs Ham </em>
 > -  Practica 0n: <em> Practica 0n. </em> 
 
 
