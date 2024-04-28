@@ -62,6 +62,10 @@ ${\color{blue}celula \space azul \space mutada}$.
 
 ## **Uso**
 
+Para correr el programa, se debe abrir el Jupyter Notebook en algun editor (como Jupyter nativo, VS Code, etc.).
+
+[Practica-05](./practica05.ipynb)
+
 <!---
 Ejemplo De Uso Notebook
 -->
