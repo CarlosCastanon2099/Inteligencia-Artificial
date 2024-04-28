@@ -46,4 +46,4 @@ Es importante recordar tambien que debemos asegurarnos de que tenemos instalado 
 
 Para correr el programa de Redes Bayesianas, se debe abrir el Jupyter Notebook en algun editor (como Jupyter nativo, VS Code, etc.).
 
-[Practica-06](./practica06.ipynb)
+[Practica-06](./practica_06.ipynb)
