@@ -15,7 +15,7 @@
 > -  Practica 06: <em> Redes Bayesianas </em>
 > -  Practica 07: <em> Regresión Logística para estimar la Probabilidad de Abandono Escolar </em>  
 > -  Practica 08: <em> Clasificación de Texto - Spam vs Ham </em>
-> -  Practica 0n: <em> Practica 0n. </em> 
+> -  Practica 09: <em> Clustering-Sando a José Madero </em> 
 
 
 <div align="center">
