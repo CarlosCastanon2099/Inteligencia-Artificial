@@ -60,7 +60,7 @@ Es importante recordar tambien que debemos asegurarnos de que tenemos instalado 
 
 ## **Uso**
 
-Para correr el programa que implementa los modelos de machine learning capaces de clasificar mensajes spam y ham, se debe abrir el Jupyter Notebook en algun editor (como Jupyter nativo, VS Code, etc.).
+Para correr el programa que implementa la clusterizacion a las canciones de José Madero, se debe abrir el Jupyter Notebook en algun editor (como Jupyter nativo, VS Code, etc.).
 
 [Practica-09](./practica_09.ipynb)
 
