@@ -9,7 +9,7 @@
 
 > -  Proyecto 01: <em> Proyecto Búsqueda (Problema del Ahorcado) </em>
 > -  Proyecto 02: <em> Clasificador de Texto Multi-Clase (Discurso de Odio) </em>
-> -  Proyecto 03: <em> Agente Inteligentemente Artificial - Super Mario </em>
+
 
 
 
