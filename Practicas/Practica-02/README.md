@@ -17,7 +17,12 @@
 
 </div>
 
----
+----
+
+[Back-Tracking.webm](https://github.com/CarlosCastanon2099/Inteligencia-Artificial/assets/108638686/e5508685-693e-4275-bae1-4bcfba4f09a2)
+
+
+----
 
 ## **Requerimientos**
 
