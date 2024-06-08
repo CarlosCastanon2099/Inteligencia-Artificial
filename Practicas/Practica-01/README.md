@@ -17,7 +17,13 @@
 
 </div>
 
----
+----
+
+[Chatterbot.webm](https://github.com/CarlosCastanon2099/Inteligencia-Artificial/assets/108638686/abdd82b9-fe78-4f62-877e-fd1e35c014c9)
+
+
+----
+
 
 ## **Requerimientos**
 
