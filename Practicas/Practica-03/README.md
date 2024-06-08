@@ -17,7 +17,12 @@
 
 </div>
 
----
+----
+
+[Bfs-Dfs.webm](https://github.com/CarlosCastanon2099/Inteligencia-Artificial/assets/108638686/76958877-af91-4e92-aa9c-7494e98280ea)
+
+
+----
 
 ## **Requerimientos**
 
